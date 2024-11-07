@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/hotel")
+@RequestMapping("api/v1/hotel")
 public class HotelController {
 
     @Autowired
     HotelService hotelService;
 
-    @PostMapping("/create")
+    @PostMapping("create")
     private HotelResponseDto createHotel(@RequestBody HotelRequestDto hotelRequestDto) {
         return hotelService.addHotel(hotelRequestDto);
     }
@@ -28,7 +28,7 @@ public class HotelController {
     }
 
 
-    @GetMapping("/getAllHotels")
+    @GetMapping("getAllHotels")
     private List<HotelResponseDto> getAllHotels() {
         return hotelService.getAllHotels();
     }

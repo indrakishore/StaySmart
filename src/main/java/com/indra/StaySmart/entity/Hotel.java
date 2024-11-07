@@ -1,12 +1,13 @@
 package com.indra.StaySmart.entity;
 
+import com.indra.StaySmart.enums.HotelStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -17,10 +18,8 @@ import java.util.UUID;
 public class Hotel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(name="hotel_id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO) // Consider changing this if your DB handles UUID generation
+    @Column(name = "hotel_id", unique = true, nullable = false)
     private UUID hotelId;
 
     @Column(name = "hotel_name", nullable = false)
@@ -32,13 +31,13 @@ public class Hotel {
     @Column(name = "contact_number", nullable = false)
     private String contactNumber;
 
-    @Column(name = "status",nullable = false)
-    private boolean status;
+    @Enumerated(EnumType.STRING)  // Store status as string value in DB
+    @Column(name = "status", nullable = false)
+    private HotelStatus status;
 
-    @Column(name="created_at", nullable = false)
-    private Date createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
 
-    @Column(name = "update_at", nullable = false)
-    private Date updatedAt;
-
+    @Column(name = "updated_at", nullable = false)
+    private LocalDate updatedAt;
 }

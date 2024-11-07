@@ -1,5 +1,6 @@
 package com.indra.StaySmart.controller;
 
+import com.indra.StaySmart.customException.ResourceNotFoundException;
 import com.indra.StaySmart.dto.request.RoomRequestDto;
 import com.indra.StaySmart.dto.response.RoomResponseDto;
 import com.indra.StaySmart.entity.Room;
@@ -19,17 +20,14 @@ public class RoomController {
 
 
     @PostMapping
-    public RoomResponseDto addRoom(@RequestBody RoomRequestDto roomRequestDto) {
+    public RoomResponseDto addRoom(@RequestBody RoomRequestDto roomRequestDto) throws ResourceNotFoundException {
         return roomService.addRoom(roomRequestDto);
     }
 
-    @GetMapping()
-    public ResponseEntity<RoomResponseDto> getRoomById(@RequestParam("roomId") UUID roomId) {
-        RoomResponseDto roomResponseDto = roomService.findRoomById(roomId);
-        return ResponseEntity.ok(roomResponseDto);
-    }
-
-
-
+//    @GetMapping()
+//    public ResponseEntity<RoomResponseDto> getRoomById(@RequestParam("roomId") UUID roomId) {
+//        RoomResponseDto roomResponseDto = roomService.findRoomByRoomId(roomId);
+//        return ResponseEntity.ok(roomResponseDto);
+//    }
 
 }
