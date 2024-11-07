@@ -1,11 +1,11 @@
 package com.indra.StaySmart.dto.response;
 
+import com.indra.StaySmart.enums.HotelStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Getter
@@ -13,11 +13,18 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HotelResponseDto {
-    private UUID hotelRequestId;
+
+    private UUID hotelId; // Change to hotelId for consistency
+
     private String hotelName;
+
     private String hotelAddress;
-    private Date createdAt;
-    private Date updatedAt;
-    private boolean status;
+
+    private LocalDate createdAt; // Use LocalDate
+
+    private LocalDate updatedAt; // Use LocalDate
+
+    private HotelStatus status; // Use an enum for better flexibility
+
     private String contactNumber;
 }

@@ -7,8 +7,8 @@ import com.indra.StaySmart.repository.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +17,6 @@ public class HotelService {
 
     @Autowired
     HotelRepository hotelRepository;
-
 
     public HotelResponseDto addHotel(HotelRequestDto hotelRequestDto) {
         Hotel hotel = convertDtoToEntity(hotelRequestDto);
@@ -28,55 +27,43 @@ public class HotelService {
     private Hotel convertDtoToEntity(HotelRequestDto hotelRequestDto) {
         Hotel hotel = new Hotel();
 
-        hotel.setHotelId(hotelRequestDto.getHotelRequestId() != null ? hotelRequestDto.getHotelRequestId() : UUID.randomUUID());
+        hotel.setHotelId(hotelRequestDto.getHotelId() != null ? hotelRequestDto.getHotelId() : UUID.randomUUID());
         hotel.setHotelName(hotelRequestDto.getHotelName());
         hotel.setAddress(hotelRequestDto.getHotelAddress());
         hotel.setContactNumber(hotelRequestDto.getContactNumber());
-        hotel.setStatus(hotelRequestDto.isStatus());
+        hotel.setStatus(hotelRequestDto.getStatus());
 
-        hotel.setCreatedAt(new Date());
-        hotel.setUpdatedAt(new Date());
-
+        hotel.setCreatedAt(LocalDate.now()); // Use LocalDate
+        hotel.setUpdatedAt(LocalDate.now()); // Use LocalDate
 
         return hotel;
     }
 
-
     private HotelResponseDto convertEntityToDto(Hotel hotel) {
-        HotelResponseDto hotelResponseDto = new HotelResponseDto();
-
-        hotelResponseDto.setHotelRequestId(hotel.getHotelId());
-        hotelResponseDto.setHotelAddress(hotel.getAddress());
-        hotelResponseDto.setHotelName(hotel.getHotelName());
-        hotelResponseDto.setContactNumber(hotel.getContactNumber());
-        hotelResponseDto.setStatus(hotel.isStatus());
-
-        hotelResponseDto.setCreatedAt(hotel.getCreatedAt());
-        hotelResponseDto.setUpdatedAt(hotel.getUpdatedAt());
-
-        return hotelResponseDto;
+        return new HotelResponseDto(
+                hotel.getHotelId(),
+                hotel.getHotelName(),
+                hotel.getAddress(),
+                hotel.getCreatedAt(),
+                hotel.getUpdatedAt(),
+                hotel.getStatus(),
+                hotel.getContactNumber()
+        );
     }
 
     public List<HotelResponseDto> getAllHotels() {
-        List<HotelResponseDto> ans = new ArrayList<>();
         List<Hotel> hotels = hotelRepository.findAll();
-        HotelResponseDto hotelResponseDto = new HotelResponseDto();
+        List<HotelResponseDto> hotelResponseDtos = new ArrayList<>();
 
-        for(Hotel hotel : hotels) {
-            hotelResponseDto.setHotelRequestId(hotel.getHotelId());
-            hotelResponseDto.setHotelName(hotel.getHotelName());
-            hotelResponseDto.setHotelAddress(hotel.getAddress());
-            hotelResponseDto.setContactNumber(hotel.getContactNumber());
-            hotelResponseDto.setStatus(hotel.isStatus());
-            hotelResponseDto.setCreatedAt(hotel.getCreatedAt());
-            hotelResponseDto.setUpdatedAt(hotel.getUpdatedAt());
-            ans.add(hotelResponseDto);
+        for (Hotel hotel : hotels) {
+            hotelResponseDtos.add(convertEntityToDto(hotel)); // Use the method to convert entity to DTO
         }
-        return ans;
+
+        return hotelResponseDtos;
     }
 
     public HotelResponseDto getHotelById(UUID hotelId) {
-        Hotel hotel = hotelRepository.findByHotelId(hotelId);
+        Hotel hotel = hotelRepository.findById(hotelId).get();
         return convertEntityToDto(hotel);
     }
 }
