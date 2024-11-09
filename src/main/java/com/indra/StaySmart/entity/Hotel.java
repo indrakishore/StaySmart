@@ -13,7 +13,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Hotel {
 
@@ -35,9 +34,23 @@ public class Hotel {
     @Column(name = "status", nullable = false)
     private HotelStatus status;
 
+    @Column(name="hotel_rating")
+    private Double rating;
+
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDate updatedAt;
+
+    public Hotel(UUID hotelId, String hotelName, String address, String contactNumber, HotelStatus status, Double rating, LocalDate createdAt, LocalDate updatedAt) {
+        this.hotelId = hotelId;
+        this.hotelName = hotelName;
+        this.address = address;
+        this.contactNumber = contactNumber;
+        this.status = status;
+        this.rating = rating;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 }

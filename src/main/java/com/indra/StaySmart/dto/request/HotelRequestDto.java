@@ -13,23 +13,22 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class HotelRequestDto {
 
     private UUID hotelId;
 
     @NotNull
-    @Size(min = 1, max = 100)
     private String hotelName;
 
     @NotNull
-    @Size(min = 1, max = 200)
     private String hotelAddress;
 
     private LocalDate createdAt;
 
     private LocalDate updatedAt;
+
+    private Double rating;
 
     @Enumerated(EnumType.STRING)
     private HotelStatus status; // Change to enum for more flexibility
@@ -38,5 +37,15 @@ public class HotelRequestDto {
     @Pattern(regexp = "^[0-9]{10,15}$")  // Regex for valid phone number format
     private String contactNumber;
 
+    public HotelRequestDto(UUID hotelId, String hotelName, String hotelAddress, LocalDate createdAt, LocalDate updatedAt, Double rating, HotelStatus status, String contactNumber) {
+        this.hotelId = hotelId;
+        this.hotelName = hotelName;
+        this.hotelAddress = hotelAddress;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.rating = rating;
+        this.status = status;
+        this.contactNumber = contactNumber;
+    }
 }
 

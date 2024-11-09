@@ -4,6 +4,8 @@ import com.indra.StaySmart.dto.request.HotelRequestDto;
 import com.indra.StaySmart.dto.response.HotelResponseDto;
 import com.indra.StaySmart.entity.Hotel;
 import com.indra.StaySmart.repository.HotelRepository;
+import com.indra.StaySmart.repository.RoomRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,9 @@ public class HotelService {
     @Autowired
     HotelRepository hotelRepository;
 
+    @Autowired
+    RoomRepository roomRepository;
+
     public HotelResponseDto addHotel(HotelRequestDto hotelRequestDto) {
         Hotel hotel = convertDtoToEntity(hotelRequestDto);
         hotelRepository.save(hotel);
@@ -27,12 +32,12 @@ public class HotelService {
     private Hotel convertDtoToEntity(HotelRequestDto hotelRequestDto) {
         Hotel hotel = new Hotel();
 
-        hotel.setHotelId(hotelRequestDto.getHotelId() != null ? hotelRequestDto.getHotelId() : UUID.randomUUID());
+        hotel.setHotelId(hotelRequestDto.getHotelId());
         hotel.setHotelName(hotelRequestDto.getHotelName());
         hotel.setAddress(hotelRequestDto.getHotelAddress());
         hotel.setContactNumber(hotelRequestDto.getContactNumber());
         hotel.setStatus(hotelRequestDto.getStatus());
-
+        hotel.setRating(hotelRequestDto.getRating());
         hotel.setCreatedAt(LocalDate.now()); // Use LocalDate
         hotel.setUpdatedAt(LocalDate.now()); // Use LocalDate
 
@@ -40,15 +45,18 @@ public class HotelService {
     }
 
     private HotelResponseDto convertEntityToDto(Hotel hotel) {
-        return new HotelResponseDto(
-                hotel.getHotelId(),
-                hotel.getHotelName(),
-                hotel.getAddress(),
-                hotel.getCreatedAt(),
-                hotel.getUpdatedAt(),
-                hotel.getStatus(),
-                hotel.getContactNumber()
-        );
+        HotelResponseDto responseDto = new HotelResponseDto();
+
+        responseDto.setHotelId(hotel.getHotelId());
+        responseDto.setHotelName(hotel.getHotelName());
+        responseDto.setHotelAddress(hotel.getAddress());
+        responseDto.setCreatedAt(hotel.getCreatedAt());
+        responseDto.setUpdatedAt(hotel.getUpdatedAt());
+        responseDto.setStatus(hotel.getStatus());
+        responseDto.setRating(hotel.getRating());
+        responseDto.setContactNumber(hotel.getContactNumber());
+
+        return responseDto;
     }
 
     public List<HotelResponseDto> getAllHotels() {
@@ -66,4 +74,83 @@ public class HotelService {
         Hotel hotel = hotelRepository.findById(hotelId).get();
         return convertEntityToDto(hotel);
     }
+
+    public HotelResponseDto updateHotel(UUID id, HotelRequestDto updateHotelDto) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hotel not Found"));
+
+        hotel.setHotelName(updateHotelDto.getHotelName());
+        hotel.setAddress(updateHotelDto.getHotelAddress());
+        hotel.setContactNumber(updateHotelDto.getContactNumber());
+        hotel.setStatus(updateHotelDto.getStatus());
+
+        if (updateHotelDto.getRating() != null) { // Check for rating in update
+            hotel.setRating(updateHotelDto.getRating());
+        }
+
+        hotel.setUpdatedAt(LocalDate.now());
+
+        Hotel updatedHotel = hotelRepository.save(hotel);
+        return convertEntityToDto(updatedHotel);
+    }
+
+    public HotelResponseDto updateHotelByPatch(UUID id, HotelRequestDto hotelRequestDto) {
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+
+        // Update only non-null fields
+        if (hotelRequestDto.getHotelName() != null) {
+            hotel.setHotelName(hotelRequestDto.getHotelName());
+        }
+        if (hotelRequestDto.getHotelAddress() != null) {
+            hotel.setAddress(hotelRequestDto.getHotelAddress());
+        }
+        if (hotelRequestDto.getContactNumber() != null) {
+            hotel.setContactNumber(hotelRequestDto.getContactNumber());
+        }
+        if (hotelRequestDto.getStatus() != null) {
+            hotel.setStatus(hotelRequestDto.getStatus());
+        }
+        if (hotelRequestDto.getRating() != null) { // Check for rating in patch update
+            hotel.setRating(hotelRequestDto.getRating());
+        }
+
+        hotel.setUpdatedAt(LocalDate.now());
+
+        Hotel updatedHotel = hotelRepository.save(hotel);
+
+        // Convert to DTO and return
+        return convertEntityToDto(updatedHotel);
+    }
+
+    @Transactional
+    public String deleteHotel(UUID hotelId) {
+        // Fetch the hotel
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+
+        // Delete all rooms associated with this hotel
+        roomRepository.deleteAllByHotel(hotel);
+
+        // Now delete the hotel
+        hotelRepository.delete(hotel);
+
+        return "Hotel deleted successfully along with associated rooms.";
+    }
+
+//    private HotelResponseDto convertToResponseDto(Hotel updatedHotel) {
+//
+//        HotelResponseDto hotelResponseDto = new HotelResponseDto();
+//
+//        hotelResponseDto.setHotelId(updatedHotel.getHotelId());
+//        hotelResponseDto.setHotelName(updatedHotel.getHotelName());
+//        hotelResponseDto.setHotelAddress(updatedHotel.getAddress());
+//        hotelResponseDto.setContactNumber(updatedHotel.getContactNumber());
+//        hotelResponseDto.setStatus(updatedHotel.getStatus());
+//        hotelResponseDto.setUpdatedAt(updatedHotel.getUpdatedAt());
+//
+//        return hotelResponseDto;
+//    }
+
+
 }

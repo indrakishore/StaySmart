@@ -42,7 +42,7 @@ public class Room {
     @Column(name = "updated_at", nullable = false)
     private LocalDate updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_id", referencedColumnName = "hotel_id", nullable = false)
     private Hotel hotel;
 

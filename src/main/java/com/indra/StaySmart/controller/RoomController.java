@@ -30,4 +30,19 @@ public class RoomController {
 //        return ResponseEntity.ok(roomResponseDto);
 //    }
 
+    //todo:
+    /***
+     * Update Room Information:
+     *
+     * Endpoint: PUT /api/v1/rooms/{roomId}
+     * Description: Update the details of a room.
+     */
+
+    /***
+     * Delete Room:
+     *
+     * Endpoint: DELETE /api/v1/rooms/{roomId}
+     * Description: Delete a room by room ID.
+     */
+
 }
