@@ -1,5 +1,6 @@
 package com.indra.StaySmart.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.indra.StaySmart.enums.RoomType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -15,18 +18,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"roomName", "hotel_id"}))
+@Table(name="room")
 public class Room {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-
-    @Column(name="room_id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID roomId;
 
-    @Column(name = "room_name", nullable = false)
+    @Column(name = "room_name")
     private String roomName;
 
     @Enumerated(EnumType.STRING)
@@ -36,14 +35,24 @@ public class Room {
     @Column(name = "amenities")
     private String amenities;
 
+    @Column(name="max_occupancy")
+    private Integer maxOccupancy;
+
+    @Column(name="active")
+    private Boolean active;
+
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDate updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id", referencedColumnName = "hotel_id", nullable = false)
-    private Hotel hotel;
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "hotel_id", referencedColumnName = "hotel_id", nullable = false)
+//    private Hotel hotel;
+
+    @ManyToMany(mappedBy = "roomList")
+    @JsonIgnore
+    private List<Hotel> hotelList = new ArrayList<Hotel>();
 
 }

@@ -1,10 +1,12 @@
 package com.indra.StaySmart.controller;
 
+import com.indra.StaySmart.customException.HotelNotFoundException;
 import com.indra.StaySmart.dto.request.HotelRequestDto;
 import com.indra.StaySmart.dto.response.HotelResponseDto;
-import com.indra.StaySmart.entity.Hotel;
 import com.indra.StaySmart.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,22 +17,49 @@ import java.util.UUID;
 public class HotelController {
 
     @Autowired
-    HotelService hotelService;
+    private HotelService hotelService;
+
+//    todo: get all hotels by location
+
 
     @PostMapping("create")
-    private HotelResponseDto createHotel(@RequestBody HotelRequestDto hotelRequestDto) {
-        return hotelService.addHotel(hotelRequestDto);
+    private ResponseEntity<HotelResponseDto> createHotel(@RequestBody HotelRequestDto hotelRequestDto) {
+        HotelResponseDto response = hotelService.addHotel(hotelRequestDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public HotelResponseDto getHotel(@RequestParam("hotelId") UUID hotelId) {
-        return hotelService.getHotelById(hotelId);
+    public ResponseEntity<HotelResponseDto> getHotelDetails(@RequestParam("hotelId") UUID hotelId) throws HotelNotFoundException {
+        {
+            HotelResponseDto hotelResponseDto = hotelService.getHotelById(hotelId);
+            return new ResponseEntity<>(hotelResponseDto, HttpStatus.OK);
+        }
     }
 
 
     @GetMapping("getAllHotels")
     private List<HotelResponseDto> getAllHotels() {
+
         return hotelService.getAllHotels();
     }
+
+//    @PutMapping("update/{id}")
+//    public HotelResponseDto updateHotel(@PathVariable UUID id,@RequestBody HotelRequestDto updateHotelDto) {
+//        HotelResponseDto updatedHotelDto = hotelService.updateHotel(id, updateHotelDto);
+//        return updatedHotelDto;
+//    }
+
+//    @PatchMapping("update/{id}")
+//    public ResponseEntity<HotelResponseDto> updateHotelByPatch(@PathVariable UUID id, @RequestBody HotelRequestDto hotelRequestDto) {
+//        HotelResponseDto updatedHotelDto = hotelService.updateHotelByPatch(id, hotelRequestDto);
+//        return ResponseEntity.ok(updatedHotelDto);
+//    }
+
+//    @DeleteMapping("delete/{hotelId}")
+//    @ResponseStatus(HttpStatus.NO_CONTENT)
+//    public void deleteHotel(@PathVariable UUID hotelId) {
+//        hotelService.deleteHotel(hotelId);
+//    }
+
 
 }
