@@ -38,6 +38,7 @@ public class HotelService {
         hotel.setContactNumber(hotelRequestDto.getContactNumber());
         hotel.setStatus(hotelRequestDto.getStatus());
         hotel.setRating(hotelRequestDto.getRating());
+
         hotel.setCreatedAt(LocalDate.now()); // Use LocalDate
         hotel.setUpdatedAt(LocalDate.now()); // Use LocalDate
 

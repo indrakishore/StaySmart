@@ -47,12 +47,25 @@ public class Room {
     @Column(name = "updated_at", nullable = false)
     private LocalDate updatedAt;
 
-//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-//    @JoinColumn(name = "hotel_id", referencedColumnName = "hotel_id", nullable = false)
-//    private Hotel hotel;
-
+    // Many-to-Many relationship with Hotel (Inverse side of the relationship)
     @ManyToMany(mappedBy = "roomList")
     @JsonIgnore
-    private List<Hotel> hotelList = new ArrayList<Hotel>();
+    private List<Hotel> hotelList = new ArrayList<>();
 
+    // One-to-Many relationship with HotelRoomMappings
+    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>();
+
+    // Called before persisting to set timestamps
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDate.now();
+        updatedAt = LocalDate.now();
+    }
+
+    // Called before updating to set updated timestamp
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDate.now();
+    }
 }
