@@ -85,7 +85,6 @@ public class RoomService {
     }
 
     // Convert Room entity to RoomResponseDto
-    // Convert Room entity to RoomResponseDto
     private RoomResponseDto convertEntityToResponseDto(Room room) {
         RoomResponseDto roomResponseDto = new RoomResponseDto();
         roomResponseDto.setRoomId(room.getRoomId());
@@ -99,6 +98,9 @@ public class RoomService {
         } else {
             roomResponseDto.setHotelId(null); // Set null if no mappings found
         }
+
+        roomResponseDto.setTotalRooms(room.getHotelRoomMappings().isEmpty() ? null : room.getHotelRoomMappings().get(0).getTotalRooms());
+
 
         return roomResponseDto;
     }
