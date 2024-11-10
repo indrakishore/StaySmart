@@ -26,6 +26,8 @@ public class RoomResponseDto {
 
     private String amenities;
 
+    private Integer totalRooms;
+
 //    private LocalDate createdAt; // Use LocalDate for consistency
 //
 //    private LocalDate updatedAt; // Use LocalDate for consistency

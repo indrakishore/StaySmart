@@ -9,11 +9,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class RoomRequestDto {
 
-    private
-    UUID roomId;
+    private UUID roomId;
 
     @NotNull
     private String roomName;
@@ -23,11 +23,15 @@ public class RoomRequestDto {
 
     private String amenities;
 
+    private Integer maxOccupancy;
+
     private LocalDate createdAt;
 
     private LocalDate updatedAt;
 
     @NotNull(message = "Hotel ID cannot be null")
     private UUID hotelId;
+
+    private Integer totalRooms;
 
 }

@@ -20,12 +20,17 @@ public class HotelRoomMappings {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "hotel_id")
-    private UUID hotelId;
+    // Many-to-One relationship with Hotel
+    @ManyToOne
+    @JoinColumn(name = "hotel_id", nullable = false)
+    private Hotel hotel;
 
-    @Column(name = "room_id")
-    private UUID roomId;
+    // Many-to-One relationship with Room
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
 
-    @Column(name = "total_rooms")
+    @Column(name = "total_rooms", nullable = false)
     private Integer totalRooms;
 }
+

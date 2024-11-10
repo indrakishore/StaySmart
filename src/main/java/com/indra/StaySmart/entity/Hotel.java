@@ -54,7 +54,11 @@ public class Hotel {
             inverseJoinColumns = @JoinColumn(name = "room_id")  // Column for Room
     )
     @JsonIgnore
-    List<Room> roomList = new ArrayList<>();
+    private List<Room> roomList = new ArrayList<>(); // List of rooms in the hotel
+
+    // One-to-Many relationship with HotelRoomMappings
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>(); // List of mappings between hotel and room
 
     // Called before persisting to set timestamps
     @PrePersist
