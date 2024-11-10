@@ -14,10 +14,10 @@ public interface RoomRepository extends JpaRepository<Room, Integer> {
 
 //    Room findByRoomId(UUID roomId);
 
-    Room findByRoomNameAndHotel_HotelId(String roomName, UUID hotelId);
+//    Room findByRoomNameAndHotel_HotelId(String roomName, UUID hotelId);
 
-    Optional<Room> findByRoomId(@NotNull(message = "Room ID is required") UUID roomId);
+//    Optional<Room> findByRoomId(@NotNull(message = "Room ID is required") UUID roomId);
 
 
-    void deleteAllByHotel(Hotel hotel);
+//    void deleteAllByHotel(Hotel hotel);
 }

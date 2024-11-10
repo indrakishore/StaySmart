@@ -50,14 +50,26 @@ public class HotelService {
         responseDto.setHotelId(hotel.getHotelId());
         responseDto.setHotelName(hotel.getHotelName());
         responseDto.setHotelAddress(hotel.getAddress());
-        responseDto.setCreatedAt(hotel.getCreatedAt());
-        responseDto.setUpdatedAt(hotel.getUpdatedAt());
-        responseDto.setStatus(hotel.getStatus());
+//        responseDto.setCreatedAt(hotel.getCreatedAt());
+//        responseDto.setUpdatedAt(hotel.getUpdatedAt());
+//        responseDto.setStatus(hotel.getStatus());
         responseDto.setRating(hotel.getRating());
         responseDto.setContactNumber(hotel.getContactNumber());
 
         return responseDto;
     }
+
+    //Using builder
+//    private HotelResponseDto convertHotelToResponseDto(Hotel hotel) {
+//        return HotelResponseDto.builder().hotelName(hotel.getHotelName())
+//                .address(hotel.getAddress()).rooms(hotel.getRoomList()).build();
+////    HotelResponseDto hotelResponseDto = new HotelResponseDto();
+////    hotelResponseDto.setHotelName(hotel.getHotelName());
+////    hotelResponseDto.setAddress(hotel.getAddress());
+////    hotelResponseDto.setRooms(hotel.getRoomList());
+//
+//        // more details to set if you want that you share to your client
+//    }
 
     public List<HotelResponseDto> getAllHotels() {
         List<Hotel> hotels = hotelRepository.findAll();
@@ -75,68 +87,68 @@ public class HotelService {
         return convertEntityToDto(hotel);
     }
 
-    public HotelResponseDto updateHotel(UUID id, HotelRequestDto updateHotelDto) {
-        Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hotel not Found"));
+//    public HotelResponseDto updateHotel(UUID id, HotelRequestDto updateHotelDto) {
+//        Hotel hotel = hotelRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Hotel not Found"));
+//
+//        hotel.setHotelName(updateHotelDto.getHotelName());
+//        hotel.setAddress(updateHotelDto.getHotelAddress());
+//        hotel.setContactNumber(updateHotelDto.getContactNumber());
+//        hotel.setStatus(updateHotelDto.getStatus());
+//
+//        if (updateHotelDto.getRating() != null) { // Check for rating in update
+//            hotel.setRating(updateHotelDto.getRating());
+//        }
+//
+//        hotel.setUpdatedAt(LocalDate.now());
+//
+//        Hotel updatedHotel = hotelRepository.save(hotel);
+//        return convertEntityToDto(updatedHotel);
+//    }
 
-        hotel.setHotelName(updateHotelDto.getHotelName());
-        hotel.setAddress(updateHotelDto.getHotelAddress());
-        hotel.setContactNumber(updateHotelDto.getContactNumber());
-        hotel.setStatus(updateHotelDto.getStatus());
+//    public HotelResponseDto updateHotelByPatch(UUID id, HotelRequestDto hotelRequestDto) {
+//        Hotel hotel = hotelRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+//
+//        // Update only non-null fields
+//        if (hotelRequestDto.getHotelName() != null) {
+//            hotel.setHotelName(hotelRequestDto.getHotelName());
+//        }
+//        if (hotelRequestDto.getHotelAddress() != null) {
+//            hotel.setAddress(hotelRequestDto.getHotelAddress());
+//        }
+//        if (hotelRequestDto.getContactNumber() != null) {
+//            hotel.setContactNumber(hotelRequestDto.getContactNumber());
+//        }
+//        if (hotelRequestDto.getStatus() != null) {
+//            hotel.setStatus(hotelRequestDto.getStatus());
+//        }
+//        if (hotelRequestDto.getRating() != null) { // Check for rating in patch update
+//            hotel.setRating(hotelRequestDto.getRating());
+//        }
+//
+//        hotel.setUpdatedAt(LocalDate.now());
+//
+//        Hotel updatedHotel = hotelRepository.save(hotel);
+//
+//        // Convert to DTO and return
+//        return convertEntityToDto(updatedHotel);
+//    }
 
-        if (updateHotelDto.getRating() != null) { // Check for rating in update
-            hotel.setRating(updateHotelDto.getRating());
-        }
-
-        hotel.setUpdatedAt(LocalDate.now());
-
-        Hotel updatedHotel = hotelRepository.save(hotel);
-        return convertEntityToDto(updatedHotel);
-    }
-
-    public HotelResponseDto updateHotelByPatch(UUID id, HotelRequestDto hotelRequestDto) {
-        Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
-
-        // Update only non-null fields
-        if (hotelRequestDto.getHotelName() != null) {
-            hotel.setHotelName(hotelRequestDto.getHotelName());
-        }
-        if (hotelRequestDto.getHotelAddress() != null) {
-            hotel.setAddress(hotelRequestDto.getHotelAddress());
-        }
-        if (hotelRequestDto.getContactNumber() != null) {
-            hotel.setContactNumber(hotelRequestDto.getContactNumber());
-        }
-        if (hotelRequestDto.getStatus() != null) {
-            hotel.setStatus(hotelRequestDto.getStatus());
-        }
-        if (hotelRequestDto.getRating() != null) { // Check for rating in patch update
-            hotel.setRating(hotelRequestDto.getRating());
-        }
-
-        hotel.setUpdatedAt(LocalDate.now());
-
-        Hotel updatedHotel = hotelRepository.save(hotel);
-
-        // Convert to DTO and return
-        return convertEntityToDto(updatedHotel);
-    }
-
-    @Transactional
-    public String deleteHotel(UUID hotelId) {
-        // Fetch the hotel
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(() -> new RuntimeException("Hotel not found"));
-
-        // Delete all rooms associated with this hotel
-        roomRepository.deleteAllByHotel(hotel);
-
-        // Now delete the hotel
-        hotelRepository.delete(hotel);
-
-        return "Hotel deleted successfully along with associated rooms.";
-    }
+//    @Transactional
+//    public String deleteHotel(UUID hotelId) {
+//        // Fetch the hotel
+//        Hotel hotel = hotelRepository.findById(hotelId)
+//                .orElseThrow(() -> new RuntimeException("Hotel not found"));
+//
+//        // Delete all rooms associated with this hotel
+////        roomRepository.deleteAllByHotel(hotel);
+//
+//        // Now delete the hotel
+//        hotelRepository.delete(hotel);
+//
+//        return "Hotel deleted successfully along with associated rooms.";
+//    }
 
 //    private HotelResponseDto convertToResponseDto(Hotel updatedHotel) {
 //
@@ -153,4 +165,8 @@ public class HotelService {
 //    }
 
 
+
+
+
 }
+

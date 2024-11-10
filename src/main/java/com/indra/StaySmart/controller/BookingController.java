@@ -1,9 +1,31 @@
 package com.indra.StaySmart.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import com.indra.StaySmart.dto.request.BookingRequestDto;
+import com.indra.StaySmart.dto.response.BookingResponseDto;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
+@RequestMapping("api/v1/booking")
 public class BookingController {
+
+
+
+    @PostMapping("/create")
+    public BookingResponseDto createBooking(@RequestBody BookingRequestDto bookingRequestDto) {
+        return null;
+    }
+
+    @GetMapping("/cancel/{bookingId}")
+    public Boolean cancelBooking(@PathVariable UUID bookingId) {
+        return true;
+    }
+
+    @PutMapping
+    public BookingResponseDto updateBooking(@RequestBody BookingRequestDto requestDto) {
+        return null;
+    }
 
     /**
      * 5. Booking APIs (Optional)

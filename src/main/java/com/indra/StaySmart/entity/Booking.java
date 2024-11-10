@@ -1,31 +1,50 @@
 package com.indra.StaySmart.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.indra.StaySmart.enums.BookingStatus;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Data
+@Table(name = "booking")
 public class Booking {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID bookingId;
 
-    @Column(nullable = false, unique = true)
-    private UUID bookingId = UUID.randomUUID();
-
-    private UUID userId;
-
+    @Column(name = "hotel_id")
     private UUID hotelId;
 
+    @Column(name = "room_id")
     private UUID roomId;
 
-    private boolean isPrepaid;
-
+    @Column(name = "booking_status")
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
+
+    @Column(name="booking_amount")
+    Integer bookingAmount;
+
+    @Column(name = "is_prepaid")
+    private boolean isPrepaid;
+
+    @Column(name = "checkin")
+    LocalDate checkIn;
+
+    @Column(name = "checkout")
+    LocalDate checkOut;
+
+    @ManyToOne
+    @JoinColumn
+    @JsonIgnore
+    Customer customer;
 }
 
