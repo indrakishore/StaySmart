@@ -5,9 +5,13 @@ import com.indra.StaySmart.customException.ResourceNotFoundException;
 import com.indra.StaySmart.dto.request.RoomTypeRequestDto;
 import com.indra.StaySmart.dto.response.RoomTypeResponseDto;
 import com.indra.StaySmart.entity.Hotel;
+import com.indra.StaySmart.entity.HotelRoomMappingId;
+import com.indra.StaySmart.entity.HotelRoomMappings;
 import com.indra.StaySmart.entity.RoomTypeEntity;
 import com.indra.StaySmart.repository.HotelRepository;
+import com.indra.StaySmart.repository.HotelRoomMappingsRepo;
 import com.indra.StaySmart.repository.RoomTypeRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +27,33 @@ public class RoomTypeService {
 
     private final RoomTypeRepository roomTypeRepository;
     private final HotelRepository hotelRepository;
+    private final HotelRoomMappingsRepo hotelRoomMappingsRepository;
 
     @Autowired
-    public RoomTypeService(RoomTypeRepository roomTypeRepository, HotelRepository hotelRepository) {
+    public RoomTypeService(RoomTypeRepository roomTypeRepository, HotelRepository hotelRepository, HotelRoomMappingsRepo hotelRoomMappingsRepository) {
         this.roomTypeRepository = roomTypeRepository;
         this.hotelRepository = hotelRepository;
+        this.hotelRoomMappingsRepository = hotelRoomMappingsRepository;
     }
 
+    @Transactional
     public RoomTypeResponseDto addRoom(RoomTypeRequestDto roomTypeRequestDto) throws HotelNotFoundException {
         Hotel hotel = hotelRepository.findById(roomTypeRequestDto.getHotelId())
                 .orElseThrow(() -> new HotelNotFoundException("Hotel not found with ID: " + roomTypeRequestDto.getHotelId()));
 
         RoomTypeEntity roomTypeEntity = convertDtoToEntity(roomTypeRequestDto);
+
+
         roomTypeRepository.save(roomTypeEntity);
         hotelRepository.save(hotel);
+
+        HotelRoomMappings hotelRoomMappings = new HotelRoomMappings();
+        hotelRoomMappings.setId(new HotelRoomMappingId(hotel.getHotelId(), roomTypeEntity.getRoomId()));
+        hotelRoomMappings.setHotel(hotel);
+        hotelRoomMappings.setRoomTypeEntity(roomTypeEntity);
+        hotelRoomMappings.setTotalRooms(roomTypeRequestDto.getTotalRooms());
+
+        hotelRoomMappingsRepository.save(hotelRoomMappings);
 
         return convertEntityToResponseDto(roomTypeEntity);
     }

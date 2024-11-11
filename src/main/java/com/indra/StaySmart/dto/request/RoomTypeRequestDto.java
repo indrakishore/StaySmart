@@ -32,4 +32,6 @@ public class RoomTypeRequestDto {
     @NotNull(message = "Hotel ID cannot be null")
     private UUID hotelId;  // Ensure this links the room to a specific hotel
 
+    private Integer totalRooms;
+
 }
