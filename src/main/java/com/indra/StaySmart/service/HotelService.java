@@ -1,10 +1,16 @@
 package com.indra.StaySmart.service;
 
+import com.indra.StaySmart.customException.HotelNotFoundException;
 import com.indra.StaySmart.dto.request.HotelRequestDto;
+import com.indra.StaySmart.dto.request.HotelRoomMappingDto;
 import com.indra.StaySmart.dto.response.HotelResponseDto;
 import com.indra.StaySmart.entity.Hotel;
+import com.indra.StaySmart.entity.HotelRoomMappingId;
+import com.indra.StaySmart.entity.HotelRoomMappings;
+import com.indra.StaySmart.entity.RoomTypeEntity;
 import com.indra.StaySmart.repository.HotelRepository;
-import com.indra.StaySmart.repository.RoomRepository;
+import com.indra.StaySmart.repository.HotelRoomMappingsRepo;
+import com.indra.StaySmart.repository.RoomTypeRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,156 +24,86 @@ import java.util.UUID;
 public class HotelService {
 
     @Autowired
-    HotelRepository hotelRepository;
+    private HotelRepository hotelRepository;
 
     @Autowired
-    RoomRepository roomRepository;
+    private RoomTypeRepository roomTypeRepository;
 
+    @Autowired
+    private HotelRoomMappingsRepo hotelRoomMappingsRepository;
+
+    @Transactional
     public HotelResponseDto addHotel(HotelRequestDto hotelRequestDto) {
+        // Create the hotel entity
         Hotel hotel = convertDtoToEntity(hotelRequestDto);
         hotelRepository.save(hotel);
+
+        // If there are room mappings, iterate over them and save to hotel_room_mappings
+        if (hotelRequestDto.getRoomMappings() != null && !hotelRequestDto.getRoomMappings().isEmpty()) {
+            for (HotelRoomMappingDto mappingDto : hotelRequestDto.getRoomMappings()) {
+                // Fetch the room type by its ID
+                RoomTypeEntity roomTypeEntity = roomTypeRepository.findById(mappingDto.getRoomId())
+                        .orElseThrow(() -> new RuntimeException("Room not found"));
+
+                // Create the composite key using hotelId and roomId
+                HotelRoomMappingId mappingId = new HotelRoomMappingId(hotel.getHotelId(), roomTypeEntity.getRoomId());
+
+                // Create a new HotelRoomMappings entity
+                HotelRoomMappings mapping = new HotelRoomMappings();
+                mapping.setId(mappingId);  // Set the composite key
+                mapping.setHotel(hotel);    // Set the hotel
+                mapping.setRoomTypeEntity(roomTypeEntity);  // Set the room type
+                mapping.setTotalRooms(mappingDto.getTotalRooms());  // Set the number of rooms
+
+                // Save the room mapping
+                hotelRoomMappingsRepository.save(mapping);
+            }
+        }
+
+        // Convert and return the hotel response DTO
         return convertEntityToDto(hotel);
     }
 
+
     private Hotel convertDtoToEntity(HotelRequestDto hotelRequestDto) {
-        Hotel hotel = new Hotel();
-
-        hotel.setHotelId(hotelRequestDto.getHotelId());
-        hotel.setHotelName(hotelRequestDto.getHotelName());
-        hotel.setAddress(hotelRequestDto.getHotelAddress());
-        hotel.setContactNumber(hotelRequestDto.getContactNumber());
-        hotel.setStatus(hotelRequestDto.getStatus());
-        hotel.setRating(hotelRequestDto.getRating());
-
-        hotel.setCreatedAt(LocalDate.now()); // Use LocalDate
-        hotel.setUpdatedAt(LocalDate.now()); // Use LocalDate
-
-        return hotel;
+        return Hotel.builder()
+                .hotelId(hotelRequestDto.getHotelId())
+                .hotelName(hotelRequestDto.getHotelName())
+                .address(hotelRequestDto.getHotelAddress())
+                .contactNumber(hotelRequestDto.getContactNumber())
+                .status(hotelRequestDto.getStatus())
+                .rating(hotelRequestDto.getRating())
+                .createdAt(LocalDate.now())
+                .updatedAt(LocalDate.now())
+                .build();
     }
 
     private HotelResponseDto convertEntityToDto(Hotel hotel) {
-        HotelResponseDto responseDto = new HotelResponseDto();
-
-        responseDto.setHotelId(hotel.getHotelId());
-        responseDto.setHotelName(hotel.getHotelName());
-        responseDto.setHotelAddress(hotel.getAddress());
-//        responseDto.setCreatedAt(hotel.getCreatedAt());
-//        responseDto.setUpdatedAt(hotel.getUpdatedAt());
-//        responseDto.setStatus(hotel.getStatus());
-        responseDto.setRating(hotel.getRating());
-        responseDto.setContactNumber(hotel.getContactNumber());
-
-        return responseDto;
+        return HotelResponseDto.builder()
+                .hotelId(hotel.getHotelId())
+                .hotelName(hotel.getHotelName())
+                .hotelAddress(hotel.getAddress())
+                .rooms(hotel.getRoomTypeEntityList())
+                .rating(hotel.getRating())
+                .contactNumber(hotel.getContactNumber())
+                .build();
     }
-
-    //Using builder
-//    private HotelResponseDto convertHotelToResponseDto(Hotel hotel) {
-//        return HotelResponseDto.builder().hotelName(hotel.getHotelName())
-//                .address(hotel.getAddress()).rooms(hotel.getRoomList()).build();
-////    HotelResponseDto hotelResponseDto = new HotelResponseDto();
-////    hotelResponseDto.setHotelName(hotel.getHotelName());
-////    hotelResponseDto.setAddress(hotel.getAddress());
-////    hotelResponseDto.setRooms(hotel.getRoomList());
-//
-//        // more details to set if you want that you share to your client
-//    }
 
     public List<HotelResponseDto> getAllHotels() {
         List<Hotel> hotels = hotelRepository.findAll();
         List<HotelResponseDto> hotelResponseDtos = new ArrayList<>();
 
         for (Hotel hotel : hotels) {
-            hotelResponseDtos.add(convertEntityToDto(hotel)); // Use the method to convert entity to DTO
+            hotelResponseDtos.add(convertEntityToDto(hotel));
         }
 
         return hotelResponseDtos;
     }
 
-    public HotelResponseDto getHotelById(UUID hotelId) {
-        Hotel hotel = hotelRepository.findById(hotelId).get();
+    public HotelResponseDto getHotelById(UUID hotelId) throws HotelNotFoundException {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException("Hotel not found with this hotel ID: " + hotelId));
+
         return convertEntityToDto(hotel);
     }
-
-//    public HotelResponseDto updateHotel(UUID id, HotelRequestDto updateHotelDto) {
-//        Hotel hotel = hotelRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Hotel not Found"));
-//
-//        hotel.setHotelName(updateHotelDto.getHotelName());
-//        hotel.setAddress(updateHotelDto.getHotelAddress());
-//        hotel.setContactNumber(updateHotelDto.getContactNumber());
-//        hotel.setStatus(updateHotelDto.getStatus());
-//
-//        if (updateHotelDto.getRating() != null) { // Check for rating in update
-//            hotel.setRating(updateHotelDto.getRating());
-//        }
-//
-//        hotel.setUpdatedAt(LocalDate.now());
-//
-//        Hotel updatedHotel = hotelRepository.save(hotel);
-//        return convertEntityToDto(updatedHotel);
-//    }
-
-//    public HotelResponseDto updateHotelByPatch(UUID id, HotelRequestDto hotelRequestDto) {
-//        Hotel hotel = hotelRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Hotel not found"));
-//
-//        // Update only non-null fields
-//        if (hotelRequestDto.getHotelName() != null) {
-//            hotel.setHotelName(hotelRequestDto.getHotelName());
-//        }
-//        if (hotelRequestDto.getHotelAddress() != null) {
-//            hotel.setAddress(hotelRequestDto.getHotelAddress());
-//        }
-//        if (hotelRequestDto.getContactNumber() != null) {
-//            hotel.setContactNumber(hotelRequestDto.getContactNumber());
-//        }
-//        if (hotelRequestDto.getStatus() != null) {
-//            hotel.setStatus(hotelRequestDto.getStatus());
-//        }
-//        if (hotelRequestDto.getRating() != null) { // Check for rating in patch update
-//            hotel.setRating(hotelRequestDto.getRating());
-//        }
-//
-//        hotel.setUpdatedAt(LocalDate.now());
-//
-//        Hotel updatedHotel = hotelRepository.save(hotel);
-//
-//        // Convert to DTO and return
-//        return convertEntityToDto(updatedHotel);
-//    }
-
-//    @Transactional
-//    public String deleteHotel(UUID hotelId) {
-//        // Fetch the hotel
-//        Hotel hotel = hotelRepository.findById(hotelId)
-//                .orElseThrow(() -> new RuntimeException("Hotel not found"));
-//
-//        // Delete all rooms associated with this hotel
-////        roomRepository.deleteAllByHotel(hotel);
-//
-//        // Now delete the hotel
-//        hotelRepository.delete(hotel);
-//
-//        return "Hotel deleted successfully along with associated rooms.";
-//    }
-
-//    private HotelResponseDto convertToResponseDto(Hotel updatedHotel) {
-//
-//        HotelResponseDto hotelResponseDto = new HotelResponseDto();
-//
-//        hotelResponseDto.setHotelId(updatedHotel.getHotelId());
-//        hotelResponseDto.setHotelName(updatedHotel.getHotelName());
-//        hotelResponseDto.setHotelAddress(updatedHotel.getAddress());
-//        hotelResponseDto.setContactNumber(updatedHotel.getContactNumber());
-//        hotelResponseDto.setStatus(updatedHotel.getStatus());
-//        hotelResponseDto.setUpdatedAt(updatedHotel.getUpdatedAt());
-//
-//        return hotelResponseDto;
-//    }
-
-
-
-
-
 }
-

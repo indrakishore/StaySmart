@@ -31,16 +31,16 @@ public class Booking {
     private BookingStatus bookingStatus;
 
     @Column(name="booking_amount")
-    Integer bookingAmount;
+    private Integer bookingAmount;
 
     @Column(name = "is_prepaid")
     private boolean isPrepaid;
 
     @Column(name = "checkin")
-    LocalDate checkIn;
+    private LocalDate checkIn;
 
     @Column(name = "checkout")
-    LocalDate checkOut;
+    private LocalDate checkOut;
 
     @ManyToOne
     @JoinColumn

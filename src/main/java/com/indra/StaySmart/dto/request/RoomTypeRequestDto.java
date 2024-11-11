@@ -1,6 +1,8 @@
 package com.indra.StaySmart.dto.request;
 
-import com.indra.StaySmart.enums.RoomType;
+import com.indra.StaySmart.enums.RoomCategory;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDate;
@@ -11,15 +13,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class RoomRequestDto {
+public class RoomTypeRequestDto {
 
     private UUID roomId;
 
     @NotNull
-    private String roomName;
-
-    @NotNull
-    private RoomType roomType;
+    @Enumerated(EnumType.STRING)
+    private RoomCategory roomCategory;
 
     private String amenities;
 
@@ -30,8 +30,6 @@ public class RoomRequestDto {
     private LocalDate updatedAt;
 
     @NotNull(message = "Hotel ID cannot be null")
-    private UUID hotelId;
-
-    private Integer totalRooms;
+    private UUID hotelId;  // Ensure this links the room to a specific hotel
 
 }

@@ -1,18 +1,15 @@
 package com.indra.StaySmart.repository;
 
-import com.indra.StaySmart.entity.Hotel;
-import com.indra.StaySmart.entity.Room;
-import jakarta.validation.constraints.NotNull;
+import com.indra.StaySmart.entity.RoomTypeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, UUID> {
+public interface RoomTypeRepository extends JpaRepository<RoomTypeEntity, UUID> {
 
-    Room findByRoomId(UUID roomId);
+    RoomTypeEntity findByRoomId(UUID roomId);
 
 //    Room findByRoomNameAndHotel_HotelId(String roomName, UUID hotelId);
 

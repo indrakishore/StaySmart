@@ -1,36 +1,44 @@
 package com.indra.StaySmart.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
-@Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
+@Entity
+//@IdClass(HotelRooMappingId.class)
 @Table(name = "hotel_room_mappings")
 public class HotelRoomMappings {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @EmbeddedId
+    private HotelRoomMappingId id;// Composite key
+    //We used @EmbeddedId to mark the primary key, which is an instance of the HotelRooMappingId class.
 
-    // Many-to-One relationship with Hotel
+
     @ManyToOne
-    @JoinColumn(name = "hotel_id", nullable = false)
+    @MapsId("hotelId") //@MapsId means that we tie those fields to a part of the key, and they’re the foreign keys of a many-to-one relationship.
+    @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
-    // Many-to-One relationship with Room
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
-    private Room room;
+    @MapsId("roomId")
+    @JoinColumn(name = "room_id")
+    private RoomTypeEntity roomTypeEntity;
 
-    @Column(name = "total_rooms", nullable = false)
+    @Column(name = "total_rooms")
     private Integer totalRooms;
+
+    // Many-to-One relationship with Hotel
+//    @ManyToOne
+//    @JoinColumn(name = "hotel_id", nullable = false)
+//    private Hotel hotel;
+
+    // Many-to-One relationship with Room
+//    @ManyToOne
+//    @JoinColumn(name = "room_id", nullable = false)
+//    private Room room;
+
+
 }
 

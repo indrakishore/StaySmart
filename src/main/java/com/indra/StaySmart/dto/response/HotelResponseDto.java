@@ -1,10 +1,8 @@
 package com.indra.StaySmart.dto.response;
 
-import com.indra.StaySmart.entity.Room;
-import com.indra.StaySmart.enums.HotelStatus;
+import com.indra.StaySmart.entity.RoomTypeEntity;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,9 +23,13 @@ public class HotelResponseDto {
 
     private String contactNumber;
 
-    private String errorMessage;
+    private List<RoomTypeEntity> rooms;  // The Room Types associated with the hotel
 
-    List<Room> rooms;
+//    private List<RoomResponseDto> rooms;
+
+
+//    private String errorMessage;
+
 
 //    private LocalDate createdAt; // Use LocalDate
 //
