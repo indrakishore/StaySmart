@@ -1,11 +1,10 @@
 package com.indra.StaySmart.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.indra.StaySmart.enums.HotelStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,6 +15,8 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @Entity
+@Builder
+@AllArgsConstructor
 @Table(name = "hotel")
 public class Hotel {
 
@@ -53,12 +54,13 @@ public class Hotel {
             joinColumns = @JoinColumn(name = "hotel_id"),  // Column for Hotel
             inverseJoinColumns = @JoinColumn(name = "room_id")  // Column for Room
     )
-//    @JsonIgnore //to avoid jackson recursion
-    private List<Room> roomList = new ArrayList<>(); // List of rooms in the hotel
+    @JsonIgnore //to avoid jackson recursion
+    private List<RoomTypeEntity> roomTypeEntityList = new ArrayList<>(); // List of rooms in the hotel
 
     // One-to-Many relationship with HotelRoomMappings
-//    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-//    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>(); // List of mappings between hotel and room
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    @JsonManagedReference  // Serialize hotelRoomMappings
+    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>(); // List of mappings between hotel and room
 
     // Called before persisting to set timestamps
     @PrePersist

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -36,5 +37,8 @@ public class HotelRequestDto {
     private LocalDate createdAt;
 
     private LocalDate updatedAt;
+
+    private List<HotelRoomMappingDto> roomMappings;  // List of mappings
+
 }
 

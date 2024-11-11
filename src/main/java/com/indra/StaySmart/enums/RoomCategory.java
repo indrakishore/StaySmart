@@ -1,6 +1,6 @@
 package com.indra.StaySmart.enums;
 
-public enum RoomType {
+public enum RoomCategory {
 
     CLASSIC,//0
     DELUXE,//1

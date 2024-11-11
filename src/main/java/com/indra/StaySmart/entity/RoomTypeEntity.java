@@ -1,12 +1,10 @@
 package com.indra.StaySmart.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.indra.StaySmart.enums.RoomType;
+import com.indra.StaySmart.enums.RoomCategory;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,10 +14,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 @Entity
 @Table(name="room")
-public class Room {
+public class RoomTypeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -30,7 +29,7 @@ public class Room {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)
-    private RoomType roomType;
+    private RoomCategory roomCategory;
 
     @Column(name = "amenities")
     private String amenities;
@@ -48,13 +47,14 @@ public class Room {
     private LocalDate updatedAt;
 
     // Many-to-Many relationship with Hotel (Inverse side of the relationship)
-    @ManyToMany(mappedBy = "roomList")
+    @ManyToMany(mappedBy = "roomTypeEntityList")
     @JsonIgnore//to avoid jacksonrecursion hotelList in room entity (bcz calling hotel_api, we want only room details in hotel)
     private List<Hotel> hotelList = new ArrayList<>();
 
     // One-to-Many relationship with HotelRoomMappings
-//    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>();
+    @OneToMany(mappedBy = "roomTypeEntity", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference  // Prevent infinite recursion for hotelRoomMappings
+    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>();
 
     // Called before persisting to set timestamps
     @PrePersist
