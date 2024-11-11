@@ -51,6 +51,7 @@ public class HotelService {
         responseDto.setHotelId(hotel.getHotelId());
         responseDto.setHotelName(hotel.getHotelName());
         responseDto.setHotelAddress(hotel.getAddress());
+        responseDto.setRooms(hotel.getRoomList());
 //        responseDto.setCreatedAt(hotel.getCreatedAt());
 //        responseDto.setUpdatedAt(hotel.getUpdatedAt());
 //        responseDto.setStatus(hotel.getStatus());

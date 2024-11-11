@@ -25,9 +25,9 @@ public class HotelResponseDto {
 
     private String contactNumber;
 
-    private String errorMessage;
+//    private String errorMessage;
 
-    List<Room> rooms;
+    private List<Room> rooms;
 
 //    private LocalDate createdAt; // Use LocalDate
 //

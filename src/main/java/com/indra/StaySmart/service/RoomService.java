@@ -73,7 +73,7 @@ public class RoomService {
     private Room convertDtoToEntity(RoomRequestDto roomRequestDto) {
         Room room = new Room();
         room.setRoomId(roomRequestDto.getRoomId());
-        room.setRoomName(roomRequestDto.getRoomName());
+//        room.setRoomName(roomRequestDto.getRoomName());
         room.setRoomType(roomRequestDto.getRoomType());
         room.setAmenities(roomRequestDto.getAmenities());
         room.setMaxOccupancy(roomRequestDto.getMaxOccupancy());
@@ -87,7 +87,7 @@ public class RoomService {
     private RoomResponseDto convertEntityToResponseDto(Room room) {
         RoomResponseDto roomResponseDto = new RoomResponseDto();
         roomResponseDto.setRoomId(room.getRoomId());
-        roomResponseDto.setRoomName(room.getRoomName());
+//        roomResponseDto.setRoomName(room.getRoomName());
         roomResponseDto.setAmenities(room.getAmenities());
         roomResponseDto.setRoomType(room.getRoomType());
 
@@ -118,7 +118,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: " + roomId));
 
-        room.setRoomName(roomRequestDto.getRoomName());
+//        room.setRoomName(roomRequestDto.getRoomName());
         room.setRoomType(roomRequestDto.getRoomType());
         room.setAmenities(roomRequestDto.getAmenities());
         room.setMaxOccupancy(roomRequestDto.getMaxOccupancy());

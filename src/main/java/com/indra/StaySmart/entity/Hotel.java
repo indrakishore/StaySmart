@@ -49,7 +49,7 @@ public class Hotel {
     // Many-to-Many relationship with Room
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "hotel_room_table",  // Join table name
+            name = "hotel_room_mappings",  // Join table name
             joinColumns = @JoinColumn(name = "hotel_id"),  // Column for Hotel
             inverseJoinColumns = @JoinColumn(name = "room_id")  // Column for Room
     )

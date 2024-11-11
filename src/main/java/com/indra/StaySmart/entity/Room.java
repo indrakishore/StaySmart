@@ -25,8 +25,8 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID roomId;
 
-    @Column(name = "room_name")
-    private String roomName;
+//    @Column(name = "room_name")
+//    private String roomName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "room_type", nullable = false)
@@ -49,7 +49,7 @@ public class Room {
 
     // Many-to-Many relationship with Hotel (Inverse side of the relationship)
     @ManyToMany(mappedBy = "roomList")
-//    @JsonIgnore
+    @JsonIgnore//to avoid jacksonrecursionhotelList in room entity
     private List<Hotel> hotelList = new ArrayList<>();
 
     // One-to-Many relationship with HotelRoomMappings
