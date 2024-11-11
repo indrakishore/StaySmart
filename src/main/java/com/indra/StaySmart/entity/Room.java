@@ -49,12 +49,12 @@ public class Room {
 
     // Many-to-Many relationship with Hotel (Inverse side of the relationship)
     @ManyToMany(mappedBy = "roomList")
-    @JsonIgnore
+//    @JsonIgnore
     private List<Hotel> hotelList = new ArrayList<>();
 
     // One-to-Many relationship with HotelRoomMappings
-    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>();
+//    @OneToMany(mappedBy = "room", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    private List<HotelRoomMappings> hotelRoomMappings = new ArrayList<>();
 
     // Called before persisting to set timestamps
     @PrePersist

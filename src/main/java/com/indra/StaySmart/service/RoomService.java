@@ -4,7 +4,7 @@ import com.indra.StaySmart.customException.ResourceNotFoundException;
 import com.indra.StaySmart.dto.request.RoomRequestDto;
 import com.indra.StaySmart.dto.response.RoomResponseDto;
 import com.indra.StaySmart.entity.Hotel;
-import com.indra.StaySmart.entity.HotelRoomMappings;
+//import com.indra.StaySmart.entity.HotelRoomMappings;
 import com.indra.StaySmart.entity.Room;
 import com.indra.StaySmart.repository.HotelRepository;
 import com.indra.StaySmart.repository.RoomRepository;
@@ -42,25 +42,24 @@ public class RoomService {
         roomRepository.save(room);
 
         // Create HotelRoomMappings object and set the total rooms
-        HotelRoomMappings mapping = new HotelRoomMappings();
-        mapping.setHotel(hotel);
-        mapping.setRoom(room);
+//        HotelRoomMappings mapping = new HotelRoomMappings();
+//        mapping.setHotel(hotel);
+//        mapping.setRoom(room);
 
         // Ensure totalRooms is set correctly
-        if (roomRequestDto.getTotalRooms() != null && roomRequestDto.getTotalRooms() > 0) {
-            mapping.setTotalRooms(roomRequestDto.getTotalRooms());
-        } else {
-            logger.error("Total rooms not provided or invalid: " + roomRequestDto.getTotalRooms());
-            throw new IllegalArgumentException("Total rooms must be provided and greater than zero");
-        }
+//        if (roomRequestDto.getTotalRooms() != null && roomRequestDto.getTotalRooms() > 0) {
+//            mapping.setTotalRooms(roomRequestDto.getTotalRooms());
+//        } else {
+//            logger.error("Total rooms not provided or invalid: " + roomRequestDto.getTotalRooms());
+//            throw new IllegalArgumentException("Total rooms must be provided and greater than zero");
+//        }
 
         // Log the mapping details to verify the correct values
-        logger.info("Creating HotelRoomMapping: Hotel ID = {}, Room ID = {}, Total Rooms = {}",
-                hotel.getHotelId(), room.getRoomId(), mapping.getTotalRooms());
+//        logger.info("Creating HotelRoomMapping: Hotel ID = {}, Room ID = {}, Total Rooms = {}",
+//                hotel.getHotelId(), room.getRoomId(), mapping.getTotalRooms());
 
         // Add mapping to the hotel and room
-        hotel.getHotelRoomMappings().add(mapping);
-        room.getHotelRoomMappings().add(mapping);
+//        room.getHotelRoomMappings().add(mapping);
 
         // Save the updated hotel entity with the new room and mapping
         hotelRepository.save(hotel);
@@ -93,13 +92,13 @@ public class RoomService {
         roomResponseDto.setRoomType(room.getRoomType());
 
         // Fetch the hotelId from the HotelRoomMappings list
-        if (room.getHotelRoomMappings() != null && !room.getHotelRoomMappings().isEmpty()) {
-            roomResponseDto.setHotelId(room.getHotelRoomMappings().get(0).getHotel().getHotelId());
-        } else {
-            roomResponseDto.setHotelId(null); // Set null if no mappings found
-        }
+//        if (room.getHotelRoomMappings() != null && !room.getHotelRoomMappings().isEmpty()) {
+//            roomResponseDto.setHotelId(room.getHotelRoomMappings().get(0).getHotel().getHotelId());
+//        } else {
+//            roomResponseDto.setHotelId(null); // Set null if no mappings found
+//        }
 
-        roomResponseDto.setTotalRooms(room.getHotelRoomMappings().isEmpty() ? null : room.getHotelRoomMappings().get(0).getTotalRooms());
+//        roomResponseDto.setTotalRooms(room.getHotelRoomMappings().isEmpty() ? null : room.getHotelRoomMappings().get(0).getTotalRooms());
 
 
         return roomResponseDto;
