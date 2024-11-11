@@ -1,17 +1,18 @@
 package com.indra.StaySmart.service;
 
+import com.indra.StaySmart.customException.HotelNotFoundException;
 import com.indra.StaySmart.dto.request.HotelRequestDto;
 import com.indra.StaySmart.dto.response.HotelResponseDto;
 import com.indra.StaySmart.entity.Hotel;
 import com.indra.StaySmart.repository.HotelRepository;
 import com.indra.StaySmart.repository.RoomRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -84,9 +85,12 @@ public class HotelService {
         return hotelResponseDtos;
     }
 
-    public HotelResponseDto getHotelById(UUID hotelId) {
-        Hotel hotel = hotelRepository.findById(hotelId).get();
-        return convertEntityToDto(hotel);
+    public HotelResponseDto getHotelById(UUID hotelId) throws HotelNotFoundException {
+        Optional<Hotel> hotel = hotelRepository.findById(hotelId);
+        if(hotel.isEmpty()) {
+            throw new HotelNotFoundException("Hotel not found with this hotelid : " + hotelId);
+        }
+        return convertEntityToDto(hotel.orElse(null));
     }
 
 //    public HotelResponseDto updateHotel(UUID id, HotelRequestDto updateHotelDto) {

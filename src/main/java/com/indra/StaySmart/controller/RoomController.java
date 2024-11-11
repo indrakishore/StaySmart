@@ -1,5 +1,6 @@
 package com.indra.StaySmart.controller;
 
+import com.indra.StaySmart.customException.HotelNotFoundException;
 import com.indra.StaySmart.customException.ResourceNotFoundException;
 import com.indra.StaySmart.dto.request.RoomRequestDto;
 import com.indra.StaySmart.dto.response.RoomResponseDto;
@@ -20,7 +21,7 @@ public class RoomController {
 
     // Create a new Room
     @PostMapping("/create")
-    public ResponseEntity<RoomResponseDto> addRoom(@RequestBody RoomRequestDto roomRequestDto) throws ResourceNotFoundException {
+    public ResponseEntity<RoomResponseDto> addRoom(@RequestBody RoomRequestDto roomRequestDto) throws ResourceNotFoundException, HotelNotFoundException {
         RoomResponseDto roomResponseDto = roomService.addRoom(roomRequestDto);
         return new ResponseEntity<>(roomResponseDto, HttpStatus.CREATED);
     }

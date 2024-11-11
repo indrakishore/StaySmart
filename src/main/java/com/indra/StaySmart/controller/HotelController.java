@@ -7,6 +7,7 @@ import com.indra.StaySmart.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,12 +29,19 @@ public class HotelController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+
     @GetMapping
-    public ResponseEntity<HotelResponseDto> getHotelDetails(@RequestParam("hotelId") UUID hotelId) throws HotelNotFoundException {
-        {
-            HotelResponseDto hotelResponseDto = hotelService.getHotelById(hotelId);
-            return new ResponseEntity<>(hotelResponseDto, HttpStatus.OK);
-        }
+    public ResponseEntity getHotelDetails(@RequestParam("hotelId") UUID hotelId) {
+
+            try {
+                HotelResponseDto hotelResponseDto = hotelService.getHotelById(hotelId);
+                return ResponseEntity.ok(hotelResponseDto);
+            } catch (HotelNotFoundException e) {
+                HotelResponseDto hotelResponseDto = new HotelResponseDto();
+//                hotelResponseDto.setErrorMessage(e.getMessage());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel Not Found");
+            }
+
     }
 
 

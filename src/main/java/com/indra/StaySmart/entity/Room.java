@@ -49,7 +49,7 @@ public class Room {
 
     // Many-to-Many relationship with Hotel (Inverse side of the relationship)
     @ManyToMany(mappedBy = "roomList")
-    @JsonIgnore//to avoid jacksonrecursionhotelList in room entity
+    @JsonIgnore//to avoid jacksonrecursion hotelList in room entity (bcz calling hotel_api, we want only room details in hotel)
     private List<Hotel> hotelList = new ArrayList<>();
 
     // One-to-Many relationship with HotelRoomMappings

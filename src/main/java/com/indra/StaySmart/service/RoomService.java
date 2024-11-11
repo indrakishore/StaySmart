@@ -1,5 +1,7 @@
 package com.indra.StaySmart.service;
 
+//import com.indra.StaySmart.customException.ResourceNotFoundException;
+import com.indra.StaySmart.customException.HotelNotFoundException;
 import com.indra.StaySmart.customException.ResourceNotFoundException;
 import com.indra.StaySmart.dto.request.RoomRequestDto;
 import com.indra.StaySmart.dto.response.RoomResponseDto;
@@ -32,10 +34,10 @@ public class RoomService {
     }
 
     // Add a new Room to a Hotel
-    public RoomResponseDto addRoom(RoomRequestDto roomRequestDto) throws ResourceNotFoundException {
+    public RoomResponseDto addRoom(RoomRequestDto roomRequestDto) throws HotelNotFoundException {
         // Find the hotel by ID
         Hotel hotel = hotelRepository.findById(roomRequestDto.getHotelId())
-                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: " + roomRequestDto.getHotelId()));
+                .orElseThrow(() -> new HotelNotFoundException("Hotel not found with ID: " + roomRequestDto.getHotelId()));
 
         // Create and save the room
         Room room = convertDtoToEntity(roomRequestDto);
