@@ -40,28 +40,32 @@ public class HotelService {
 
         // If there are room mappings, iterate over them and save to hotel_room_mappings
         if (hotelRequestDto.getRoomMappings() != null && !hotelRequestDto.getRoomMappings().isEmpty()) {
-            for (HotelRoomMappingDto mappingDto : hotelRequestDto.getRoomMappings()) {
-                // Fetch the room type by its ID
-                RoomTypeEntity roomTypeEntity = roomTypeRepository.findById(mappingDto.getRoomId())
-                        .orElseThrow(() -> new RuntimeException("Room not found"));
-
-                // Create the composite key using hotelId and roomId
-                HotelRoomMappingId mappingId = new HotelRoomMappingId(hotel.getHotelId(), roomTypeEntity.getRoomId());
-
-                // Create a new HotelRoomMappings entity
-                HotelRoomMappings mapping = new HotelRoomMappings();
-                mapping.setId(mappingId);  // Set the composite key
-                mapping.setHotel(hotel);    // Set the hotel
-                mapping.setRoomTypeEntity(roomTypeEntity);  // Set the room type
-                mapping.setTotalRooms(mappingDto.getTotalRooms());  // Set the number of rooms
-
-                // Save the room mapping
-                hotelRoomMappingsRepository.save(mapping);
-            }
+            saveRoomMappings(hotelRequestDto.getRoomMappings(), hotel);
         }
 
         // Convert and return the hotel response DTO
         return convertEntityToDto(hotel);
+    }
+
+    private void saveRoomMappings(List<HotelRoomMappingDto> roomMappings, Hotel hotel) {
+        for (HotelRoomMappingDto mappingDto : roomMappings) {
+            // Fetch the room type by its ID
+            RoomTypeEntity roomTypeEntity = roomTypeRepository.findById(mappingDto.getRoomId())
+                    .orElseThrow(() -> new RuntimeException("Room not found"));
+
+            // Create the composite key using hotelId and roomId
+            HotelRoomMappingId mappingId = new HotelRoomMappingId(hotel.getHotelId(), roomTypeEntity.getRoomId());
+
+            // Create a new HotelRoomMappings entity
+            HotelRoomMappings mapping = new HotelRoomMappings();
+            mapping.setId(mappingId);  // Set the composite key
+            mapping.setHotel(hotel);    // Set the hotel
+            mapping.setRoomTypeEntity(roomTypeEntity);  // Set the room type
+            mapping.setTotalRooms(mappingDto.getTotalRooms());  // Set the number of rooms
+
+            // Save the room mapping
+            hotelRoomMappingsRepository.save(mapping);
+        }
     }
 
 

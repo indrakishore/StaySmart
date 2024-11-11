@@ -1,8 +1,6 @@
 package com.indra.StaySmart.dto.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -10,6 +8,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PriceInventoryResponseDto {
 
 
@@ -25,6 +25,8 @@ public class PriceInventoryResponseDto {
     private Double price;
 
 
-    private LocalDate date;
+    private LocalDate startDate;
+
+    private LocalDate endDate;
 
 }

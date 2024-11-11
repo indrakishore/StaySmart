@@ -29,8 +29,14 @@ public class PriceInventory {
     @Column(name = "room_id")
     private UUID roomId;
 
-    @Column(name="date")
-    private LocalDate date;
+    @Column(name="start_date")
+    private LocalDate startDate;
+
+    @Column(name = "isSoldOut")
+    private Boolean isSoldOut;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     @Column(name = "available_rooms")
     private Integer availableRooms;

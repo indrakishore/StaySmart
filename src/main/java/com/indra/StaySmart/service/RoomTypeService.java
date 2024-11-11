@@ -38,23 +38,35 @@ public class RoomTypeService {
 
     @Transactional
     public RoomTypeResponseDto addRoom(RoomTypeRequestDto roomTypeRequestDto) throws HotelNotFoundException {
+        // Fetch the Hotel object using the provided hotelId. Throw exception if not found.
         Hotel hotel = hotelRepository.findById(roomTypeRequestDto.getHotelId())
                 .orElseThrow(() -> new HotelNotFoundException("Hotel not found with ID: " + roomTypeRequestDto.getHotelId()));
 
+        // Convert the incoming DTO to an Entity.
         RoomTypeEntity roomTypeEntity = convertDtoToEntity(roomTypeRequestDto);
 
-
+        // Save the RoomTypeEntity to the roomTypeRepository.
         roomTypeRepository.save(roomTypeEntity);
+
+        // Save the updated Hotel entity.
         hotelRepository.save(hotel);
 
+        // Create a new HotelRoomMappings object.
         HotelRoomMappings hotelRoomMappings = new HotelRoomMappings();
+
+        // Set the composite ID consisting of hotelId and roomId.
         hotelRoomMappings.setId(new HotelRoomMappingId(hotel.getHotelId(), roomTypeEntity.getRoomId()));
+        // Set the Hotel object.
         hotelRoomMappings.setHotel(hotel);
+        // Set the RoomTypeEntity object.
         hotelRoomMappings.setRoomTypeEntity(roomTypeEntity);
+        // Set the total number of rooms.
         hotelRoomMappings.setTotalRooms(roomTypeRequestDto.getTotalRooms());
 
+        // Save the HotelRoomMappings object to the hotelRoomMappingsRepository.
         hotelRoomMappingsRepository.save(hotelRoomMappings);
 
+        // Convert the saved RoomTypeEntity to a Response DTO and return it.
         return convertEntityToResponseDto(roomTypeEntity);
     }
 

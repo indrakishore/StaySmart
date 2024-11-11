@@ -1,26 +1,24 @@
 package com.indra.StaySmart.controller;
 
-import com.indra.StaySmart.dto.request.InventoryPricingDto;
+import com.indra.StaySmart.dto.request.PriceInventoryDto;
 import com.indra.StaySmart.dto.response.PriceInventoryResponseDto;
 import com.indra.StaySmart.service.PriceInventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @RestController
-@RequestMapping("api/v1/pricing-inventory")
+@RequestMapping("/api/v1/pricing-inventory/")
 public class PriceInventoryController {
 
     @Autowired
     PriceInventoryService priceInventoryService;
 
-    @PostMapping("add")
-    public ResponseEntity<String> add(@RequestBody InventoryPricingDto inventoryPricingDto) {
-        String response = priceInventoryService.addInventoryPricing(inventoryPricingDto);
-        return ResponseEntity.ok(response);
+    @PostMapping("/add")
+    public ResponseEntity<PriceInventoryResponseDto> add(@RequestBody PriceInventoryDto priceInventoryDto) {
+        PriceInventoryResponseDto response = priceInventoryService.priceInventory(priceInventoryDto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
 

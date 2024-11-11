@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class CustomerService {
@@ -24,7 +25,7 @@ public class CustomerService {
 
     }
 
-    public Customer getCustomerDetails(Integer customerId) {
+    public Customer getCustomerDetails(UUID customerId) {
         Optional<Customer> customer=customerRepository.findById(customerId);
         return  customer.get();
 

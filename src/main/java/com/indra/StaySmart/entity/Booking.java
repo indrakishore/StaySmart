@@ -26,6 +26,12 @@ public class Booking {
     @Column(name = "room_id")
     private UUID roomId;
 
+    @Column(nullable = false)
+    private UUID customerId;
+
+    @Column(nullable = false)
+    private UUID inventoryId;
+
     @Column(name = "booking_status")
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
@@ -46,5 +52,6 @@ public class Booking {
     @JoinColumn
     @JsonIgnore
     Customer customer;
+
 }
 
