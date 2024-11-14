@@ -7,10 +7,12 @@ import com.indra.StaySmart.entity.PriceInventory;
 import com.indra.StaySmart.repository.PriceInventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -21,12 +23,26 @@ public class PriceInventoryService {
 
     public boolean checkAvailability(UUID inventoryId) {
         // Your business logic to check inventory availability
-        return true; // assuming always available for this example
+        Optional<PriceInventory> priceInventoryOpt = priceInventoryRepository.findById(inventoryId);
+        return priceInventoryOpt.isPresent() && priceInventoryOpt.get().getAvailableRooms() > 0;
     }
 
+    @Transactional
     public boolean updateInventory(UUID inventoryId) {
-        // Your business logic to update inventory
-        return true;
+        Optional<PriceInventory> priceInventoryOpt = priceInventoryRepository.findById(inventoryId);
+
+        if (priceInventoryOpt.isEmpty()) {
+            return false; // Inventory does not exist
+        }
+
+        PriceInventory priceInventory = priceInventoryOpt.get();
+        if (priceInventory.getAvailableRooms() > 0) {
+            priceInventory.setAvailableRooms(priceInventory.getAvailableRooms() - 1);
+            priceInventoryRepository.save(priceInventory);
+            return true;
+        }
+
+        return false; // Not enough inventory
     }
 
     public PriceInventoryResponseDto priceInventory(PriceInventoryDto priceInventoryDto) {
@@ -104,8 +120,25 @@ public class PriceInventoryService {
         return availableRooms <= 0;
     }
 
-    public boolean checkAvailablilty(UUID inventoryId) {
-        return true;
+
+    public Optional<Object> getInventory(UUID inventoryId) {
+        return priceInventoryRepository.findById(inventoryId).map(priceInventory -> (Object) priceInventory);
+    }
+
+    public List<PriceInventoryResponseDto> getPriceAndInvetoryForHotel(Integer hotelId, LocalDate checkin) {
+        return null;
+    }
+
+    public PriceInventoryResponseDto getInventory(UUID hotelId, LocalDate checkin) {
+        List<PriceInventory> priceInventoryDetails = priceInventoryRepository.findByHotelIdAndCheckin(hotelId, checkin);
+
+        if (priceInventoryDetails.isEmpty()) {
+            return null; // or throw an appropriate exception
+        }
+
+        // Assuming we return the first found inventory, you may want to handle multiple results differently
+        PriceInventory priceInventory = priceInventoryDetails.get(0);
+        return convertEntityToResponseDto(priceInventory);
     }
 }
 

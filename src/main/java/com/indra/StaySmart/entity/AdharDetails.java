@@ -31,4 +31,7 @@ public class AdharDetails {
     @JoinColumn
     @JsonIgnore
     Customer customer;
+
+//    public void setAdharNumber(String number) {
+//    }
 }

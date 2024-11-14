@@ -12,6 +12,4 @@ public interface PriceInventoryRepository extends JpaRepository<PriceInventory, 
     @Query("select p from PriceInventory p")
     List<PriceInventory> findByHotelIdAndCheckin(UUID hotelId, LocalDate checkin);
 
-//    List<PriceInventory> findByHotelIdAndCheckin(Integer hotelId, LocalDate checkin);
-
 }

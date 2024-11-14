@@ -70,6 +70,33 @@ public class RoomTypeService {
         return convertEntityToResponseDto(roomTypeEntity);
     }
 
+    @Transactional
+    public boolean updateTotalRooms(UUID hotelId, UUID roomId, Integer totalRooms) throws ResourceNotFoundException, HotelNotFoundException {
+        // Validate totalRooms
+        if (totalRooms < 0) {
+            throw new IllegalArgumentException("Total rooms cannot be negative");
+        }
+
+        // Fetch the Hotel object using the provided hotelId. Throw exception if not found.
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException("Hotel not found with ID: " + hotelId));
+
+        // Fetch the HotelRoomMappings object using the provided hotelId and roomId. Throw exception if not found.
+        HotelRoomMappings hotelRoomMappings = hotelRoomMappingsRepository
+                .findByHotelIdAndRoomTypeId(hotelId, roomId)
+                .orElseThrow(() -> new ResourceNotFoundException("Mapping not found with Hotel ID: " + hotelId + " and Room ID: " + roomId));
+
+        // Update the total number of rooms.
+        hotelRoomMappings.setTotalRooms(totalRooms);
+
+        // Save the updated HotelRoomMappings object to the hotelRoomMappingsRepository.
+        hotelRoomMappingsRepository.save(hotelRoomMappings);
+
+        logger.info("Total rooms for Hotel ID: {} and Room ID: {} updated to {}", hotelId, roomId, totalRooms);
+
+        return true;
+    }
+
     private RoomTypeEntity convertDtoToEntity(RoomTypeRequestDto roomTypeRequestDto) {
         return RoomTypeEntity.builder()
                 .roomId(roomTypeRequestDto.getRoomId())

@@ -8,8 +8,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
 @RestController
-@RequestMapping("/api/v1/pricing-inventory/")
+@RequestMapping("/api/v1/price-inventory")
 public class PriceInventoryController {
 
     @Autowired
@@ -21,8 +25,13 @@ public class PriceInventoryController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("/get")
+    public PriceInventoryResponseDto getInventory(@RequestParam("hotelId") UUID hotelId, @RequestParam("checkin") LocalDate checkin) {
+        return priceInventoryService.getInventory(hotelId, checkin);
+    }
 
-//    public List<PriceInventoryResponseDto> getPriceAndInvetoryForHotel(@RequestParam("hotelId") Integer hotelId, @RequestParam("checkin") LocalDate checkin) {
-//        return priceInventoryService.getPriceAndInvetoryForHotel(hotelId, checkin);
-//    }
+
+    public List<PriceInventoryResponseDto> getPriceAndInvetoryForHotel(@RequestParam("hotelId") Integer hotelId, @RequestParam("checkin") LocalDate checkin) {
+        return priceInventoryService.getPriceAndInvetoryForHotel(hotelId, checkin);
+    }
 }

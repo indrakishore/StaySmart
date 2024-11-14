@@ -1,134 +1,209 @@
 package com.indra.StaySmart.service;
 
+import com.indra.StaySmart.customException.BookingNotFoundException;
 import com.indra.StaySmart.customException.InventoryNotAvailableException;
 import com.indra.StaySmart.dto.request.BookingRequestDto;
 import com.indra.StaySmart.dto.response.BookingResponseDto;
 import com.indra.StaySmart.entity.Booking;
+import com.indra.StaySmart.entity.Customer;
+import com.indra.StaySmart.entity.PriceInventory;
 import com.indra.StaySmart.enums.BookingStatus;
 import com.indra.StaySmart.repository.BookingRepository;
+import com.indra.StaySmart.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Component
 public class BookingService {
-
-//    @Autowired
-//    BookingRepo bookingRepo;
-
 
     @Autowired
     private BookingRepository bookingRepo;
 
     @Autowired
-    private PriceInventoryService priceInventoryService;
+    private CustomerRepository customerRepository;
 
     @Autowired
-    private BookingRepository bookingRepository;
+    private PriceInventoryService priceInventoryService;
 
+    /**
+     * Creates a new booking.
+     *
+     * @param bookingRequestDto The request DTO containing booking details.
+     * @return A response DTO containing the booking details.
+     */
     @Transactional
     public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto) {
-        // validate request
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+
+        // Validate the request DTO
         validateBookingRequest(bookingRequestDto);
 
-        // Check inventory availability and get price
+        // Get inventoryId from booking request DTO and check availability
         UUID inventoryId = bookingRequestDto.getInventoryId();
-        boolean isAvailable = priceInventoryService.checkAvailablilty(inventoryId);
+        boolean isAvailable = priceInventoryService.checkAvailability(inventoryId);
         if (!isAvailable) {
+            logger.error("Inventory not available for: {}", inventoryId);
             throw new InventoryNotAvailableException("Inventory not available.");
         }
 
-        // Create booking and set status to CREATED
-        Booking booking = new Booking();
-        booking.setInventoryId(inventoryId);
-        booking.setCustomerId(bookingRequestDto.getCustomerId());
-        booking.setBookingStatus(BookingStatus.valueOf("CONFIRMED"));
+        // Retrieve the PriceInventory entity to set the relationship
+        PriceInventory inventory = (PriceInventory) priceInventoryService.getInventory(inventoryId)
+                .orElseThrow(() -> new InventoryNotAvailableException("Inventory not available."));
 
-        // Save booking
+        // Retrieve the Customer entity
+        UUID customerId = bookingRequestDto.getCustomerId();
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        logger.info("Customer retrieved: {}", customer);
+
+        // Create a new Booking entity and set its properties
+        Booking booking = new Booking();
+        booking.setInventory(inventory);
+        booking.setCustomer(customer);
+        booking.setBookingStatus(BookingStatus.CONFIRMED);
+        booking.setHotelId(bookingRequestDto.getHotelId());
+        booking.setRoomId(bookingRequestDto.getRoomId());
+        booking.setCheckIn(bookingRequestDto.getCheckin());
+        booking.setCheckOut(bookingRequestDto.getCheckout());
+        booking.setBookingAmount(bookingRequestDto.getBookingAmount());
+        booking.setPrepaid(true); // Assuming it's set to prepaid; change as needed
+
+        logger.info("Booking before saving: {}", booking);
+
+        // Save the new booking entity to the database
         booking = bookingRepo.save(booking);
 
-        // Update inventory
+        logger.info("Booking after saving: {}", booking);
+
+        // Update inventory status
         priceInventoryService.updateInventory(inventoryId);
 
-        // Map booking to BookingResponseDto
+        // Map the Booking entity to BookingResponseDto and return it
         BookingResponseDto bookingResponseDto = mapToBookingResponseDto(booking);
 
-        // Return booking response
+        // Logging response info
+        logger.info("Booking Response: {}", bookingResponseDto);
+
         return bookingResponseDto;
     }
 
+    /**
+     * Validates the booking request DTO.
+     *
+     * @param bookingRequestDto The request DTO to validate.
+     */
     private void validateBookingRequest(BookingRequestDto bookingRequestDto) {
-        // Example validation logic
         if (bookingRequestDto.getCustomerId() == null) {
-            throw new IllegalArgumentException("User ID must not be null");
+            throw new IllegalArgumentException("Customer ID must not be null");
         }
         if (bookingRequestDto.getInventoryId() == null) {
             throw new IllegalArgumentException("Inventory ID must not be null");
         }
+        if (bookingRequestDto.getCheckin() == null || bookingRequestDto.getCheckout() == null) {
+            throw new IllegalArgumentException("Check-in and Check-out dates must not be null");
+        }
+        // Add more validation as needed
     }
 
+    /**
+     * Maps a Booking entity to a BookingResponseDto.
+     *
+     * @param booking The Booking entity to map.
+     * @return A BookingResponseDto.
+     */
     private BookingResponseDto mapToBookingResponseDto(Booking booking) {
-        // Map the booking entity to BookingResponseDto
         BookingResponseDto responseDto = new BookingResponseDto();
         responseDto.setBookingId(booking.getBookingId());
-        responseDto.setCustomerId(booking.getCustomerId());
-        responseDto.setInventoryId(booking.getInventoryId());
+        responseDto.setCustomerId(booking.getCustomer().getCustomerId()); // Set the entire Customer object
+        responseDto.setInventoryId(booking.getInventory().getId());
         responseDto.setStatus(booking.getBookingStatus());
         return responseDto;
     }
 
-
+    /**
+     * Cancels an existing booking.
+     *
+     * @param bookingId The ID of the booking to cancel.
+     * @return True if the booking was successfully cancelled, false otherwise.
+     */
     @Transactional
     public Boolean cancelBooking(UUID bookingId) {
-        // Retrieve the booking from the repository using the bookingId
-        Optional<Booking> optionalBooking = bookingRepository.findByBookingId(bookingId);
+        // Retrieve the booking from the repository
+        Optional<Booking> optionalBooking = bookingRepo.findByBookingId(bookingId);
 
         if (optionalBooking.isPresent()) {
             Booking booking = optionalBooking.get();
 
-            // Validate if booking is not already cancelled
-            if (!"CANCELLED".equals(booking.getBookingStatus())) {
+            // Validate if the booking is not already cancelled
+            if (booking.getBookingStatus() != BookingStatus.CANCELLED) {
+                // Update the booking status to CANCELLED
+                booking.setBookingStatus(BookingStatus.CANCELLED);
+                bookingRepo.save(booking);
 
-                // Update status to CANCELLED
-                booking.setBookingStatus(BookingStatus.valueOf("CANCELLED"));
-
-                // Save the updated booking
-                bookingRepository.save(booking);
-
-                // Increase inventory
-                priceInventoryService.updateInventory(booking.getInventoryId());
+                // Increase inventory to reflect the cancelled booking
+                priceInventoryService.updateInventory(booking.getInventory().getId());
 
                 return true;
             } else {
-                // Booking is already cancelled
+                // The booking is already cancelled
                 return false;
             }
         } else {
-            // Booking does not exist
+            // The booking does not exist
             return false;
         }
     }
 
-    public BookingResponseDto getBooking(UUID bookingId) {
-        Optional<Booking> optionalBooking = bookingRepository.findById(bookingId);
+    /**
+     * Retrieves the booking details by booking ID.
+     *
+     * @param bookingId The ID of the booking to retrieve.
+     * @return A BookingResponseDto containing the booking details.
+     */
+    public BookingResponseDto getBooking(UUID bookingId) throws BookingNotFoundException {
+        Optional<Booking> optionalBooking = bookingRepo.findById(bookingId);
 
         if (optionalBooking.isPresent()) {
-            Booking booking = optionalBooking.get();
-            return new BookingResponseDto(booking);
+            return new BookingResponseDto(optionalBooking.get());
         } else {
-            return null;
+            throw new BookingNotFoundException("Booking not found with id: " + bookingId);
         }
     }
+
+    /**
+     * Updates the details of an existing booking.
+     *
+     * @param requestDto The request DTO containing updated booking details.
+     * @return A BookingResponseDto containing the updated booking details.
+     * @throws BookingNotFoundException if the booking is not found.
+     */
+    public BookingResponseDto updateBookingDetails(BookingRequestDto requestDto) throws BookingNotFoundException {
+        UUID bookingId = requestDto.getBookingId();
+        Booking booking = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found with id: " + bookingId));
+
+        // Update booking details from the request DTO
+        Customer customer = customerRepository.findById(requestDto.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        booking.setCheckIn(requestDto.getCheckin());
+        booking.setCheckOut(requestDto.getCheckout());
+        booking.setCustomer(customer);
+        booking.setBookingAmount(requestDto.getBookingAmount());
+        booking.setPrepaid(true); // Update as needed
+
+        // Save the updated booking entity to the database
+        booking = bookingRepo.save(booking);
+
+        // Map the Booking entity to BookingResponseDto and return it
+        return mapToBookingResponseDto(booking);
+    }
 }
-
-        // validate if booking is not in cancelled state  and is present in our database
-        // status -> CANCCLLED // bookingRepo.save();
-        // increase inventory // priceInventoryService.updateInventory();
-
-        // findById
-
-
-

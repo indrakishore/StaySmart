@@ -16,7 +16,7 @@ public class CustomerController {
     private CustomerService customerService;
 
 
-    @PostMapping("/create")
+    @PostMapping("/add")
     public Boolean createCustomer(@RequestBody Customer customer){
         return customerService.createCustomer(customer);
 

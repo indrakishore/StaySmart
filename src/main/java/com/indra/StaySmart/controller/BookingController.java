@@ -1,7 +1,10 @@
 package com.indra.StaySmart.controller;
 
+import com.indra.StaySmart.customException.BookingNotFoundException;
 import com.indra.StaySmart.dto.request.BookingRequestDto;
 import com.indra.StaySmart.dto.response.BookingResponseDto;
+import com.indra.StaySmart.service.BookingService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -10,21 +13,23 @@ import java.util.UUID;
 @RequestMapping("api/v1/booking")
 public class BookingController {
 
+    @Autowired
+    BookingService bookingService;
 
 
     @PostMapping("/create")
     public BookingResponseDto createBooking(@RequestBody BookingRequestDto bookingRequestDto) {
-        return null;
+        return bookingService.createBooking(bookingRequestDto);
     }
 
     @GetMapping("/cancel/{bookingId}")
     public Boolean cancelBooking(@PathVariable UUID bookingId) {
-        return true;
+        return bookingService.cancelBooking(bookingId);
     }
 
     @PutMapping
-    public BookingResponseDto updateBooking(@RequestBody BookingRequestDto requestDto) {
-        return null;
+    public BookingResponseDto updateBooking(@RequestBody BookingRequestDto requestDto) throws BookingNotFoundException {
+        return bookingService.updateBookingDetails(requestDto);
     }
 
     /**
