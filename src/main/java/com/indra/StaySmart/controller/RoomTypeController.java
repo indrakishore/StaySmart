@@ -3,6 +3,7 @@ package com.indra.StaySmart.controller;
 import com.indra.StaySmart.customException.HotelNotFoundException;
 import com.indra.StaySmart.customException.ResourceNotFoundException;
 import com.indra.StaySmart.dto.request.RoomTypeRequestDto;
+import com.indra.StaySmart.dto.request.UpdateTotalRoomsRequestDto;
 import com.indra.StaySmart.dto.response.RoomTypeResponseDto;
 import com.indra.StaySmart.service.RoomTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,15 @@ public class RoomTypeController {
     public ResponseEntity<RoomTypeResponseDto> addRoom(@RequestBody RoomTypeRequestDto roomTypeRequestDto) throws ResourceNotFoundException, HotelNotFoundException {
         RoomTypeResponseDto roomTypeResponseDto = roomTypeService.addRoom(roomTypeRequestDto);
         return new ResponseEntity<>(roomTypeResponseDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/update/total-rooms")
+    public boolean updateTotalRooms(@RequestBody UpdateTotalRoomsRequestDto updateTotalRoomsRequestDto) throws ResourceNotFoundException, HotelNotFoundException {
+        UUID hotelId = updateTotalRoomsRequestDto.getHotelId();
+        UUID roomId = updateTotalRoomsRequestDto.getRoomId();
+        Integer totalRooms = updateTotalRoomsRequestDto.getTotalRooms();
+
+        return roomTypeService.updateTotalRooms(hotelId, roomId, totalRooms);
     }
 
     // Get a Room by ID

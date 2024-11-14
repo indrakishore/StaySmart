@@ -31,8 +31,8 @@ public class Customer {
     @Column(name="email")
     String email;
 
-//    @OneToOne(mappedBy = "customer",cascade = CascadeType.ALL)
-//    AdharDetails adharDetails;
+    @OneToOne(mappedBy = "customer",cascade = CascadeType.ALL)
+    AdharDetails adharDetails;
 
     @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL)
     List<Booking> bookingsList= new ArrayList<>();

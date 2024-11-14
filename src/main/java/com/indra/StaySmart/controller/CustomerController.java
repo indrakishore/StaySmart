@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequestMapping("/api/v1/customer")
 @RestController
@@ -15,14 +16,14 @@ public class CustomerController {
     private CustomerService customerService;
 
 
-    @PostMapping("/create")
+    @PostMapping("/add")
     public Boolean createCustomer(@RequestBody Customer customer){
         return customerService.createCustomer(customer);
 
     }
 
     @GetMapping("/")
-    public Customer getCustomer(@RequestParam Integer customerId){
+    public Customer getCustomer(@RequestParam UUID customerId){
         return customerService.getCustomerDetails(customerId);
 
     }

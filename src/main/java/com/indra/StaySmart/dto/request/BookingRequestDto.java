@@ -1,9 +1,19 @@
 package com.indra.StaySmart.dto.request;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class BookingRequestDto {
+    private UUID bookingId;
+
+    private UUID customerId;
+
+    private UUID inventoryId;
 
     private UUID hotelId;
 
@@ -12,8 +22,6 @@ public class BookingRequestDto {
     private LocalDate checkin;
 
     private LocalDate checkout;
-
-    private UUID customerId;
 
     private Integer numberOfGuest;
 

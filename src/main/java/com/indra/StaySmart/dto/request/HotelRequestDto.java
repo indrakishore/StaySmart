@@ -25,6 +25,8 @@ public class HotelRequestDto {
 
     private String hotelAddress;
 
+    private String city;
+
     @NotNull
     @Pattern(regexp = "^[0-9]{10,15}$")  // Regex for valid phone number format
     private String contactNumber;

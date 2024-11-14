@@ -23,19 +23,33 @@ public class PriceInventory {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "hotel_id")
+    // These fields ensure we can quickly query by ids
+    @Column(name = "hotel_id", insertable = false, updatable = false)
     private UUID hotelId;
 
-    @Column(name = "room_id")
+    @Column(name = "room_id", insertable = false, updatable = false)
     private UUID roomId;
 
-    @Column(name="date")
-    private LocalDate date;
+//    @ManyToOne
+//    @JoinColumn(name = "hotel_id", referencedColumnName = "id", nullable = false)
+//    private Hotel hotel;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "room_id", referencedColumnName = "id", nullable = false)
+//    private RoomTypeEntity roomTypeEntity;
+
+    @Column(name="start_date")
+    private LocalDate startDate;
+
+    @Column(name = "isSoldOut")
+    private Boolean isSoldOut;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
 
     @Column(name = "available_rooms")
     private Integer availableRooms;
 
     @Column(name = "price")
     private Double price;
-
 }

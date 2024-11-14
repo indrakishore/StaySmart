@@ -31,6 +31,9 @@ public class Hotel {
     @Column(name = "hotel_address", nullable = false)
     private String address;
 
+    @Column
+    private String city;
+
     @Column(name = "contact_number", nullable = false)
     private String contactNumber;
 

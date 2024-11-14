@@ -20,31 +20,35 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID bookingId;
 
-    @Column(name = "hotel_id")
+    @Column(name = "hotel_id", nullable = false)
     private UUID hotelId;
 
-    @Column(name = "room_id")
+    @Column(name = "room_id", nullable = false)
     private UUID roomId;
 
-    @Column(name = "booking_status")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inventory_id", referencedColumnName = "id", nullable = false)
+    @JsonIgnore
+    private PriceInventory inventory;
+
+    @Column(name = "booking_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
 
-    @Column(name="booking_amount")
-    private Integer bookingAmount;
+    @Column(name = "booking_amount", nullable = false)
+    private Double bookingAmount;
 
     @Column(name = "is_prepaid")
     private boolean isPrepaid;
 
-    @Column(name = "checkin")
+    @Column(name = "checkin", nullable = false)
     private LocalDate checkIn;
 
-    @Column(name = "checkout")
+    @Column(name = "checkout", nullable = false)
     private LocalDate checkOut;
 
-    @ManyToOne
-    @JoinColumn
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
     @JsonIgnore
-    Customer customer;
+    private Customer customer;
 }
-

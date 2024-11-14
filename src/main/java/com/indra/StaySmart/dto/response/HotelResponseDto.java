@@ -1,6 +1,7 @@
 package com.indra.StaySmart.dto.response;
 
 import com.indra.StaySmart.entity.RoomTypeEntity;
+import com.indra.StaySmart.enums.HotelStatus;
 import lombok.*;
 
 import java.util.List;
@@ -19,6 +20,8 @@ public class HotelResponseDto {
 
     private String hotelAddress;
 
+    private String city;
+
     private Double rating;
 
     private String contactNumber;
@@ -35,7 +38,7 @@ public class HotelResponseDto {
 //
 //    private LocalDate updatedAt; // Use LocalDate
 //
-//    private HotelStatus status; // Use an enum for better flexibility
+    private HotelStatus status; // Use an enum for better flexibility
 
 
 }
