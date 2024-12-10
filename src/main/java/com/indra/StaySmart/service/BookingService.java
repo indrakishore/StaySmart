@@ -2,12 +2,14 @@ package com.indra.StaySmart.service;
 
 import com.indra.StaySmart.customException.BookingNotFoundException;
 import com.indra.StaySmart.customException.InventoryNotAvailableException;
+import com.indra.StaySmart.dto.NotificationDataDto;
 import com.indra.StaySmart.dto.request.BookingRequestDto;
 import com.indra.StaySmart.dto.response.BookingResponseDto;
 import com.indra.StaySmart.entity.Booking;
 import com.indra.StaySmart.entity.Customer;
 import com.indra.StaySmart.entity.PriceInventory;
 import com.indra.StaySmart.enums.BookingStatus;
+import com.indra.StaySmart.interfaces.NotificationService;
 import com.indra.StaySmart.repository.BookingRepository;
 import com.indra.StaySmart.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
@@ -31,6 +33,9 @@ public class BookingService {
 
     @Autowired
     private PriceInventoryService priceInventoryService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * Creates a new booking.
@@ -92,7 +97,25 @@ public class BookingService {
         // Logging response info
         logger.info("Booking Response: {}", bookingResponseDto);
 
+        //send email
+//        CustomerRequestDto customerRequestDto = new CustomerRequestDto();
+        NotificationDataDto notificationDataDto = getNotificationSenderDto(bookingRequestDto.getCustomerId());
+        notificationService.sendNotification(notificationDataDto);
+
         return bookingResponseDto;
+    }
+
+    private NotificationDataDto getNotificationSenderDto(UUID customerId) {
+        Optional<Customer> customerOptional = customerRepository.findByCustomerId(customerId);
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            NotificationDataDto notificationDataDto = new NotificationDataDto();
+            notificationDataDto.setText("Congratulations! " + customer.getName() + " Your Booking has been confirmed!\n enjoy, Have a great Stay. Thanks" );
+            notificationDataDto.setUserEMail(customer.getEmail());
+            notificationDataDto.setSubject(customer.getName() + "Booking has been confirmed.");
+            return notificationDataDto;
+        }
+        return null;
     }
 
     /**

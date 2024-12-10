@@ -31,6 +31,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/auth/register", "/auth/login").permitAll() // Allow login and register
                 .requestMatchers("/admin/**").hasRole("ADMIN")  // Only allow admins for admin endpoints
                 .requestMatchers("/user/**").hasRole("USER")  // Only allow users for user endpoints
+                .requestMatchers("/api/v1/").permitAll()
                 .anyRequest().authenticated() // All other requests need authentication
                 .and()
                 .formLogin().and()

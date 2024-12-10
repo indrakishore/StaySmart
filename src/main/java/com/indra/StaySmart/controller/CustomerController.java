@@ -1,5 +1,6 @@
 package com.indra.StaySmart.controller;
 
+import com.indra.StaySmart.dto.request.CustomerRequestDto;
 import com.indra.StaySmart.entity.Customer;
 import com.indra.StaySmart.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class CustomerController {
 
 
     @PostMapping("/add")
-    public Boolean createCustomer(@RequestBody Customer customer){
-        return customerService.createCustomer(customer);
+    public String createCustomer(@RequestBody CustomerRequestDto customer){
+        return customerService.addUser(customer);
 
     }
 
