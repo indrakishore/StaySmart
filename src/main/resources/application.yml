@@ -1,0 +1,19 @@
+disccount:
+  offer:
+    price:25
+
+#spring:
+#  datasource:
+#    driver-class-name:
+#    username:
+#    url:
+#    password:
+
+
+myList:
+  - orange
+  - banana
+  - apple
+  - gfhsks
+  - jdkls
+  -
