@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements org.springframework.security.co
         return User.builder()
                 .username(appUser.getUsername())
                 .password(appUser.getPassword()) // Use the encoded password directly from DB
-//                .authorities("ROLE_" + appUser.getRole())  // Prefix role with ROLE_
+                .authorities("ROLE_" + appUser.getRole())  // Prefix role with ROLE_
                 .build();
     }
 }

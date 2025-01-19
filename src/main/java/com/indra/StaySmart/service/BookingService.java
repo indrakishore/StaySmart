@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -230,12 +228,5 @@ public class BookingService {
 
         // Map the Booking entity to BookingResponseDto and return it
         return mapToBookingResponseDto(booking);
-    }
-
-    public List<Customer> findCustomerWithMultipleBooking() {
-        List<UUID> customerIds = bookingRepo.findCustomerWithMultipleBooking();
-
-        return bookingRepo.findCustomersById(customerIds);
-
     }
 }

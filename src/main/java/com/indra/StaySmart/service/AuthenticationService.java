@@ -4,7 +4,6 @@ import com.indra.StaySmart.dto.request.AuthRegisterRequest;
 import com.indra.StaySmart.dto.request.AuthRequest;
 import com.indra.StaySmart.entity.AppUser;
 import com.indra.StaySmart.repository.UserInfoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,11 +15,8 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final UserInfoRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
 
     public AuthenticationService(UserInfoRepository userRepository,
                                  PasswordEncoder passwordEncoder,
