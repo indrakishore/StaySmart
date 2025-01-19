@@ -2,11 +2,15 @@ package com.indra.StaySmart.controller;
 
 import com.indra.StaySmart.customException.BookingNotFoundException;
 import com.indra.StaySmart.dto.request.BookingRequestDto;
+import com.indra.StaySmart.dto.request.CustomerRequestDto;
 import com.indra.StaySmart.dto.response.BookingResponseDto;
+import com.indra.StaySmart.entity.Customer;
+import com.indra.StaySmart.entity.Hotel;
 import com.indra.StaySmart.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,6 +35,13 @@ public class BookingController {
     public BookingResponseDto updateBooking(@RequestBody BookingRequestDto requestDto) throws BookingNotFoundException {
         return bookingService.updateBookingDetails(requestDto);
     }
+
+    //you have to find those customers those have multiple booking in single hotel
+    @GetMapping("/findCustomer")
+    public List<Customer> findCustomerWithMultipleBooking() {
+        return bookingService.findCustomerWithMultipleBooking();
+    }
+
 
     /**
      * 5. Booking APIs (Optional)
